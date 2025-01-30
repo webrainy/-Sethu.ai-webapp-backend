@@ -6,6 +6,7 @@ import initstudentModel from "../../models/studentModel.js";
 import { ROLE, STATE } from "../../config/constants.js";
 
 import initbatchModel from "../../models/batchModel.js";
+import { Op } from "sequelize";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -13,9 +14,22 @@ export default router.get("/", authenticate, async (req, res) => {
     if (req.user.role != ROLE.ADMIN) {
       return send(res, RESPONSE.ACCESS_DENIED);
     }
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
     const studentModel = await initstudentModel();
     const batchModel = await initbatchModel();
+
+    let query = {
+      isactive: STATE.ACTIVE,
+    };
+
+    req.query.searchkey
+      ? (query.name = {
+          [Op.iLike]: `%${req.query.searchkey}%`,
+        })
+      : "";
 
     let studentData = await studentModel.findAll({
       include: [
@@ -25,10 +39,7 @@ export default router.get("/", authenticate, async (req, res) => {
           attributes: ["name"],
         },
       ],
-      where: {
-        isactive: STATE.ACTIVE,
-        // role: ROLE.STUDENT,
-      },
+      where: query,
       attributes: [
         "student_id",
         "name",
@@ -59,6 +70,9 @@ export default router.get("/", authenticate, async (req, res) => {
         "income",
         "review",
       ],
+      order: [["createdAt", "DESC"]],
+      offset: skip,
+      limit: limit,
     });
 
     if (studentData.length == 0) {

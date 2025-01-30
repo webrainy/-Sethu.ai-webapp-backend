@@ -2,12 +2,16 @@ import authApiHandler from "./src/controllers/auth/apiHandler.js";
 import adminApiHandler from "./src/controllers/manageAdmin/apiHandler.js";
 import studentApiHandler from "./src/controllers/manageStudent/apiHandler.js";
 import batchApiHandler from "./src/controllers/manageBatch/apiHandler.js";
+import assignmentApiHandler from "./src/controllers/manageAssignment/apiHandler.js";
+
 
 const routes = (app) => {
   app.use("/api/auth", authApiHandler);
   app.use("/api/admin", adminApiHandler);
   app.use("/api/student", studentApiHandler);
   app.use("/api/batch", batchApiHandler);
+  app.use("/api/assign", assignmentApiHandler);
+
 };
 
 export default routes;

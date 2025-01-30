@@ -15,8 +15,8 @@ export default router.put("/", authenticate, async (req, res) => {
       return send(res, RESPONSE.ACCESS_DENIED);
     }
 
-    const { student_id, batch_id } = req.query;
-    const { current_state, review } = req.body;
+    const student_id = req.query.student_id;
+    const { current_state, review, batch_id } = req.body;
 
     let studentModel = await initstudentModel();
     let updates = {};
@@ -48,7 +48,7 @@ export default router.put("/", authenticate, async (req, res) => {
 
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {
-    console.log("assign batch", err);
+    console.log("update student", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

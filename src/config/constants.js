@@ -20,6 +20,22 @@ export const CURRENT_STATE = {
   TBD: 6,
 };
 
+export const ASSIGN_TO = {
+  STUDENT: 1,
+  BATCH: 2,
+};
+
+export const COMPLITION_STATUS = {
+  PENDING: 1,
+  COMPLETED: 2,
+  REJECTED: 3,
+};
+
+export const EXISTING_ASSIGNMENT = {
+  YES: 1,
+  NO: 2,
+};
+
 export const STATE = {
   ACTIVE: 1,
   INACTIVE: 0,

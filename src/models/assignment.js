@@ -1,4 +1,4 @@
-import { DataTypes, INTEGER } from "sequelize";
+import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
 import initstudentmodel from "./studentModel.js";
 import initbatchModel from "./batchModel.js";
@@ -9,18 +9,22 @@ const assignmentModel = {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
   },
-
   title: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-
   description: {
     type: DataTypes.STRING,
+    allowNull: true,
   },
-  assigned_to: {
+  url: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  isactive: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    defaultValue: 1,
   },
 };
 
@@ -34,10 +38,10 @@ const initassignmentModel = async () => {
     });
 
     const batch = await initbatchModel();
-    const student = await initstudentmodel();
+    // const student = await initstudentmodel();
 
     assignment.belongsTo(batch, {
-      as: "assignmentInfo",
+      as: "batchAssignment",
       onDelete: "cascade",
       foreignKey: {
         allowNull: true,
@@ -46,15 +50,15 @@ const initassignmentModel = async () => {
       targetKey: "batch_id",
     });
 
-    assignment.belongsTo(student, {
-      as: "assignmentInfo",
-      onDelete: "cascade",
-      foreignKey: {
-        allowNull: true,
-        name: "student_id",
-      },
-      targetKey: "student_id",
-    });
+    // assignment.belongsTo(student, {
+    //   as: "studentInfo",
+    //   onDelete: "cascade",
+    //   foreignKey: {
+    //     allowNull: true,
+    //     name: "student_id",
+    //   },
+    //   targetKey: "student_id",
+    // });
 
     await assignment.sync({ alter: true });
     return assignment;

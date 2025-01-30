@@ -169,7 +169,7 @@ const initstudentmodel = async () => {
     });
 
     batch.hasMany(student, {
-      as: "batchInfo",
+      as: "students",
       onDelete: "cascade",
       foreignKey: {
         allowNull: true,
