@@ -11,9 +11,16 @@ const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
+    let query = {
+      isactive: STATE.ACTIVE,
+    };
+
+    if (req.user.role == ROLE.STUDENT) {
+      query.student_id = req.user.id;
+    } else {
+      req.query.student_id ? (query.student_id = req.query.student_id) : "";
     }
+
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -21,14 +28,14 @@ export default router.get("/", authenticate, async (req, res) => {
     const studentModel = await initstudentModel();
     const batchModel = await initbatchModel();
 
-    let query = {
-      isactive: STATE.ACTIVE,
-    };
-
     req.query.searchkey
       ? (query.name = {
           [Op.iLike]: `%${req.query.searchkey}%`,
         })
+      : "";
+
+    req.query.current_state
+      ? (query.current_state = req.query.current_state)
       : "";
 
     let studentData = await studentModel.findAll({
@@ -69,6 +76,7 @@ export default router.get("/", authenticate, async (req, res) => {
         "mother_occ",
         "income",
         "review",
+        "current_state",
       ],
       order: [["createdAt", "DESC"]],
       offset: skip,
@@ -78,6 +86,14 @@ export default router.get("/", authenticate, async (req, res) => {
     if (studentData.length == 0) {
       return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "student data"));
     }
+
+    studentData = studentData.map((itm) => {
+      return {
+        ...itm.toJSON(),
+        resume: "/document/" + itm.resume,
+        coverletter: "/document/" + itm.coverletter,
+      };
+    });
 
     return send(res, RESPONSE.SUCCESS, studentData);
   } catch (error) {

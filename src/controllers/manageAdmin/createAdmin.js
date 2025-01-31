@@ -9,6 +9,7 @@ import {
 } from "../../config/constants.js";
 import bcrypt from "bcrypt";
 import initadminModel from "../../models/adminModel.js";
+import initstudentmodel from "../../models/studentModel.js";
 
 const router = Router();
 
@@ -17,6 +18,7 @@ export default router.post("/", async (req, res) => {
     const { name, phone, email, password } = req.body;
 
     let adminModel = await initadminModel();
+    let studentModel = await initstudentmodel();
 
     if (name == "" || name == undefined) {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "name"));
@@ -65,13 +67,27 @@ export default router.post("/", async (req, res) => {
       },
     });
 
-    if (isphoneExist) {
+    let isStudentphoneExist = await studentModel.findOne({
+      where: {
+        isactive: STATE.ACTIVE,
+        phone,
+      },
+    });
+
+    let isStudentemailExist = await studentModel.findOne({
+      where: {
+        isactive: STATE.ACTIVE,
+        email,
+      },
+    });
+
+    if (isphoneExist || isStudentphoneExist) {
       return send(
         res,
         setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone")
       );
     }
-    if (isemailExist) {
+    if (isemailExist || isStudentemailExist) {
       return send(
         res,
         setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email")
