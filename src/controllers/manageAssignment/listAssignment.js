@@ -25,7 +25,7 @@ export default router.get("/", authenticate, async (req, res) => {
         isactive: STATE.ACTIVE,
         batch_id: batch_id,
       },
-      attributes: ["assignment_id", "title", "description", "createdAt"],
+      attributes: ["assignment_id", "title", "description","url", "createdAt"],
       order: [["createdAt", "DESC"]],
     });
 

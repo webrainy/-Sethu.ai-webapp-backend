@@ -29,7 +29,7 @@ export default router.put("/", authenticate, async (req, res) => {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "current_state"));
     }
 
-    if (review || review != undefined) {
+    if (review && review != undefined) {
       updates.review = review;
     }
 
@@ -48,7 +48,7 @@ export default router.put("/", authenticate, async (req, res) => {
 
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {
-    console.log("update student", err);
+    console.log("Update student", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

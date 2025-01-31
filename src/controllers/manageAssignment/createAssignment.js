@@ -89,7 +89,7 @@ export default router.post("/", authenticate, async (req, res) => {
 
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {
-    console.log("create batch", err);
+    console.log("create assignment", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

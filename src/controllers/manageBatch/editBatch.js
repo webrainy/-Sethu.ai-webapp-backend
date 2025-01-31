@@ -23,7 +23,7 @@ export default router.put("/", authenticate, async (req, res) => {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "batch_id"));
     }
 
-    if (name || name != undefined) {
+    if (name && name != undefined) {
       let isBatchExists = await batchModel.findOne({
         where: {
           isactive: STATE.ACTIVE,
@@ -48,7 +48,7 @@ export default router.put("/", authenticate, async (req, res) => {
     }
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {
-    console.log("create batch", err);
+    console.log("edit batch", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

@@ -252,7 +252,7 @@ export default router.post("/", authenticate, async (req, res) => {
       return send(res, RESPONSE.SUCCESS);
     });
   } catch (err) {
-    console.log("register", err);
+    console.log("create student", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

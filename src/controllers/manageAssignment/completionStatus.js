@@ -19,7 +19,7 @@ export default router.put("/", authenticate, async (req, res) => {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "assign_id"));
     }
 
-    if (compl_status || compl_status != undefined) {
+    if (compl_status && compl_status != undefined) {
       if (compl_status == COMPLITION_STATUS.COMPLETED) {
         updates.compl_status = compl_status;
         updates.completed_at = Date.now();
@@ -34,7 +34,7 @@ export default router.put("/", authenticate, async (req, res) => {
 
     return send(res, RESPONSE.SUCCESS);
   } catch (error) {
-    console.log("completion statu", error);
+    console.log("completion status", error);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

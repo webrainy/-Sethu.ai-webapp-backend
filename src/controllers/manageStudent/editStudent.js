@@ -211,19 +211,14 @@ export default router.put("/", authenticate, async (req, res) => {
         updates.income = income;
       }
 
-      console.log(student_id);
-
-    let x =  await studentModel.update(updates, {
+      await studentModel.update(updates, {
         where: { student_id: student_id },
       });
-
-
-      
 
       return send(res, RESPONSE.SUCCESS);
     });
   } catch (err) {
-    console.log("edit student", err);
+    console.log("Edit student", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

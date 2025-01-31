@@ -27,30 +27,6 @@ export default router.get("/", authenticate, async (req, res) => {
           "name",
           "phone",
           "email",
-
-          // "location",
-          // "education",
-          // "cgpa",
-          // "year_passed",
-          // "gmat",
-          // "course_prep",
-          // "curnt_work",
-          // "commit_ft",
-          // "sk_python",
-          // "sk_sql",
-          // "sk_java",
-          // "sk_analyticalskill",
-          // "sk_prblmsolving",
-          // "sk_engprof",
-          // "hckr_rnk",
-          // "hobbies",
-          // "linkedin_url",
-          // "github_url",
-          // "resume",
-          // "coverletter",
-          // "father_occ",
-          // "mother_occ",
-          // "income",
           "review",
           "current_state",
         ])
@@ -58,7 +34,6 @@ export default router.get("/", authenticate, async (req, res) => {
 
     const batchModel = await initbatchModel();
     const studentModel = await initstudentmodel();
-    const assignmentModel = await initassignmentModel();
 
     let batchData = await batchModel.findAll({
       where: query,
@@ -71,41 +46,24 @@ export default router.get("/", authenticate, async (req, res) => {
           attributes: studentAttribute,
         },
       ],
+      order: [["createdAt", "DESC"]],
     });
 
     if (batchData.length == 0) {
-      return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "student data"));
+      return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "batches"));
     }
 
-    // batchData = await Promise.all(
-      batchData.map(async (itm) => {
-        // let batchAssignment;
-     
-        // if (req.query.batch_id) {
-        //   batchAssignment = await assignmentModel.findAll({
-        //     where: {
-        //       batch_id: itm.batch_id,
-        //     },
-        //     attributes: ["assignment_id", "title", "description", "createdAt"],
-        //     order: [["createdAt", "DESC"]],
-        //   });
-
-        // }
-
-        return {
-          batch_id: itm.batch_id,
-          name: itm.name,
-          students: itm.students,
-          // batchAssignment,
-        };
-      })
-    // );
-
-
+    batchData.map(async (itm) => {
+      return {
+        batch_id: itm.batch_id,
+        name: itm.name,
+        students: itm.students,
+      };
+    });
 
     return send(res, RESPONSE.SUCCESS, batchData);
   } catch (error) {
-    console.log(error);
+    console.log("list batch", error);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });
