@@ -28,6 +28,7 @@ export default router.get("/", authenticate, async (req, res) => {
           "phone",
           "email",
           "review",
+          "education",
           "current_state",
         ])
       : "";
