@@ -7,9 +7,11 @@ import {
   ROLE,
   STATE,
 } from "../../config/constants.js";
+import { sendEmails } from "../../middlewares/emailMessage.js";
 import initassignmentModel from "../../models/assignment.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initAssignmentItm from "../../models/assignmentItm.js";
+import initstudentmodel from "../../models/studentModel.js";
 
 const router = Router();
 
@@ -19,7 +21,7 @@ export default router.post("/", authenticate, async (req, res) => {
       return send(res, RESPONSE.ACCESS_DENIED);
     }
 
-    const {
+    let {
       exstng_assign,
       title,
       description,
@@ -28,17 +30,17 @@ export default router.post("/", authenticate, async (req, res) => {
       student_id,
       batch_id,
     } = req.body;
+
     let assignmentModel = await initassignmentModel();
     let assignmentItmModel = await initAssignmentItm();
+    let studentModel = await initstudentmodel();
 
     if (exstng_assign == "" || exstng_assign == undefined) {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "exstng_assign"));
     }
-
     if (batch_id == "" || batch_id == undefined) {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "batch_id"));
     }
-
     if (student_id == "" || student_id == undefined) {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "student_id"));
     }
@@ -48,11 +50,11 @@ export default router.post("/", authenticate, async (req, res) => {
     }
 
     let assigned_on = Date.now();
+
     if (exstng_assign == EXISTING_ASSIGNMENT.NO) {
       if (title == "" || title == undefined) {
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "title"));
       }
-
       if (description == "" || description == undefined) {
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "description"));
       }
@@ -71,6 +73,19 @@ export default router.post("/", authenticate, async (req, res) => {
           student_id: student_id[i],
           assignment_id: assignment.assignment_id,
         });
+        let student = await studentModel.findOne({
+          where: {
+            isactive: STATE.ACTIVE,
+            student_id: student_id[i],
+          },
+        });
+
+        let message = {
+          subject: `Assignment Notification`,
+          text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
+        };
+
+        sendEmails(student, message);
       }
     } else if (exstng_assign == EXISTING_ASSIGNMENT.YES) {
       if (assignment_id == "" || assignment_id == undefined) {
@@ -84,6 +99,20 @@ export default router.post("/", authenticate, async (req, res) => {
           student_id: student_id[i],
           assignment_id: assignment_id,
         });
+
+        let student = await studentModel.findOne({
+          where: {
+            isactive: STATE.ACTIVE,
+            student_id: student_id[i],
+          },
+        });
+
+        let message = {
+          subject: `Assignment Notification`,
+          text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
+        };
+
+        sendEmails(student, message);
       }
     }
 

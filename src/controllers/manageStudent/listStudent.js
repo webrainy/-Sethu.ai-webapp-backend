@@ -34,6 +34,9 @@ export default router.get("/", authenticate, async (req, res) => {
         })
       : "";
 
+    //batch_id is mandatory while using this api as search inside batch
+    req.query.batch_id ? (query.batch_id = req.query.batch_id) : "";
+
     req.query.current_state
       ? (query.current_state = req.query.current_state)
       : "";
@@ -43,7 +46,7 @@ export default router.get("/", authenticate, async (req, res) => {
         {
           model: batchModel,
           as: "batchInfo",
-          attributes: ["name"],
+          attributes: ["batch_id", "name"],
         },
       ],
       where: query,
@@ -95,7 +98,13 @@ export default router.get("/", authenticate, async (req, res) => {
       };
     });
 
-    return send(res, RESPONSE.SUCCESS, studentData);
+    const totalCount = await studentModel.count({ where: query });
+
+    return send(res, RESPONSE.SUCCESS, {
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      studentData,
+    });
   } catch (error) {
     console.log("List student", error);
     return send(res, RESPONSE.UNKNOWN_ERROR);
