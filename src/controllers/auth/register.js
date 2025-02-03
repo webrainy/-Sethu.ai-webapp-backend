@@ -281,7 +281,7 @@ Your Instructor`,
 
 Welcome again to our **Python Training Course!** Below are your login credentials:  
 
-🔹 **Portal Link:** http://103.212.120.217:5933
+🔹 **Portal Link:** http://103.212.120.217:5933/login
 🔹 **Username:** ${email}  
 🔹 **Password:** ${password}  
 

@@ -13,6 +13,7 @@ import { deletefile } from "../../middlewares/deleteFile.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initadminmodel from "../../models/adminModel.js";
+import { sendEmails } from "../../middlewares/emailMessage.js";
 
 const imagedir = "document/";
 const uploads = image(imagedir).fields([
@@ -240,7 +241,7 @@ export default router.post("/", authenticate, async (req, res) => {
 
       const encryptedPassword = await bcrypt.hash(password, HASH_ROUND);
 
-      await studentModel.create({
+      let student = await studentModel.create({
         ...req.body,
         current_state: CURRENT_STATE.IN_PROGRESS,
         role: ROLE.STUDENT,
@@ -248,6 +249,48 @@ export default router.post("/", authenticate, async (req, res) => {
         resume,
         coverletter,
       });
+
+      let message = {
+        subject: `🎉 Welcome to Python Training – Let’s Begin!`,
+
+        text: `Dear ${student.name},
+
+Welcome aboard! 🚀 We are thrilled to have you in our **Python Training Course**. Get ready to embark on a journey where you will master Python, from basics to advanced concepts.
+
+### What’s Next?  
+✅ Interactive live sessions  
+✅ Hands-on coding exercises  
+✅ Expert mentorship  
+
+Stay tuned for your **login credentials** in the next email.
+
+If you have any questions, feel free to reach out.
+
+Happy Coding! 👨‍💻🐍  
+
+Best Regards,  
+Your Instructor`,
+      };
+
+      sendEmails(student, message);
+
+      let message2 = {
+        subject: `🔑 Your Python Training Login Credentials`,
+
+        text: `Dear ${student.name},  
+
+Welcome again to our **Python Training Course!** Below are your login credentials:  
+
+🔹 **Portal Link:** http://103.212.120.217:5933/login
+🔹 **Username:** ${email}  
+🔹 **Password:** ${password}  
+
+See you in class! 🚀  
+
+Best Regards,  
+Your Instructor`,
+      };
+      sendEmails(student, message2);
 
       return send(res, RESPONSE.SUCCESS);
     });
