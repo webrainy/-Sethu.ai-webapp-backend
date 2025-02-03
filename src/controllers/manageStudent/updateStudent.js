@@ -40,6 +40,9 @@ export default router.put("/", authenticate, async (req, res) => {
         updates.current_state = current_state;
         updates.batch_id = batch_id;
       }
+    } else {
+      updates.current_state = current_state;
+      updates.batch_id = null;
     }
 
     await studentModel.update(updates, {

@@ -17,7 +17,6 @@ export const CURRENT_STATE = {
   ACCEPTED: 3,
   REJECTED: 4,
   UNABLE_TO_DECIDE: 5,
-  TBD: 6,
 };
 
 export const COMPLITION_STATUS = {
