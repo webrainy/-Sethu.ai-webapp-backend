@@ -45,8 +45,6 @@ export default router.put("/", authenticate, async (req, res) => {
           },
         });
 
-        console.log(batch);
-
         let student = await studentModel.findOne({
           where: {
             student_id,
@@ -67,7 +65,6 @@ export default router.put("/", authenticate, async (req, res) => {
     Your Instructor`,
         };
 
-        
         sendEmails(student, message);
 
         updates.current_state = current_state;
