@@ -5,7 +5,7 @@ import { CURRENT_STATE, ROLE, STATE } from "../../config/constants.js";
 import initbatchModel from "../../models/batchModel.js";
 import initstudentModel from "../../models/studentModel.js";
 import authenticate from "../../middlewares/authenticate.js";
-import { Op } from "sequelize";
+import { sendEmails } from "../../middlewares/emailMessage.js";
 
 const router = Router();
 
@@ -19,6 +19,8 @@ export default router.put("/", authenticate, async (req, res) => {
     const { current_state, review, batch_id } = req.body;
 
     let studentModel = await initstudentModel();
+    let batchModel = await initbatchModel();
+
     let updates = {};
 
     if (student_id == "" || student_id == undefined) {
@@ -37,6 +39,36 @@ export default router.put("/", authenticate, async (req, res) => {
       if (batch_id == "" || batch_id == undefined) {
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "batch_id"));
       } else {
+        let batch = await batchModel.findOne({
+          where: {
+            batch_id,
+          },
+        });
+
+        console.log(batch);
+
+        let student = await studentModel.findOne({
+          where: {
+            student_id,
+          },
+        });
+
+        let message = {
+          subject: `🎯 You’ve Been Assigned to a Batch!`,
+
+          text: `Dear ${student.name},
+    
+    You have been assigned to Batch ${batch.name} for your Python Training.
+     
+    If you have any questions, feel free to reach out.
+    
+    
+    Best Regards,  
+    Your Instructor`,
+        };
+
+        sendEmails(student, message);
+
         updates.current_state = current_state;
         updates.batch_id = batch_id;
       }
