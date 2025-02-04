@@ -67,6 +67,7 @@ export default router.put("/", authenticate, async (req, res) => {
     Your Instructor`,
         };
 
+        
         sendEmails(student, message);
 
         updates.current_state = current_state;
