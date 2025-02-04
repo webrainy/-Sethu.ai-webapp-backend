@@ -30,6 +30,11 @@ export const EXISTING_ASSIGNMENT = {
   NO: 2,
 };
 
+export const EVENT_TYPE = {
+  EVENT: 1,
+  INTERVIEW: 2,
+};
+
 export const STATE = {
   ACTIVE: 1,
   INACTIVE: 0,
