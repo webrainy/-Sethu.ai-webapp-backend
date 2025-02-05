@@ -7,6 +7,7 @@ import initeventItmModel from "../../models/eventitmModel.js";
 import initeventModel from "../../models/eventModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initbatchModel from "../../models/batchModel.js";
+import moment from "moment";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -26,12 +27,20 @@ export default router.get("/", authenticate, async (req, res) => {
 
     let query = {};
 
+    let limit;
+    req.query.limit ? (limit = req.query.limit) : "";
+
     req.query.event_type ? (query.event_type = req.query.event_type) : "";
 
     const eventItmModel = await initeventItmModel();
     const eventModel = await initeventModel();
     const studentModel = await initstudentmodel();
     const batchModel = await initbatchModel();
+
+    let order;
+    req.query.order == 1
+      ? (order = [[{ model: eventModel, as: "eventInfo" }, "datetime", "ASC"]])
+      : (order = [["createdAt", "DESC"]]);
 
     let studentInfo = await studentModel.findAll({
       where: { isactive: STATE.ACTIVE, student_id: student_id },
@@ -66,12 +75,22 @@ export default router.get("/", authenticate, async (req, res) => {
         },
       ],
       attributes: ["ev_id", "student_id", "event_id", "createdAt"],
-      order: [["createdAt", "DESC"]],
+      order: order,
+      limit: limit,
     });
 
-    // if (events.length == 0) {
-    //   return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "event"));
-    // }
+    events = events.map((itm) => {
+      return {
+        ...itm.toJSON(),
+        eventInfo: {
+          ...itm.eventInfo.toJSON(),
+          datetime: moment
+            .utc(itm.eventInfo.datetime)
+            .tz("Europe/Berlin")
+            .format("YYYY-MM-DD HH:mm:ss"),
+        },
+      };
+    });
 
     return send(res, RESPONSE.SUCCESS, { studentInfo, events });
   } catch (error) {

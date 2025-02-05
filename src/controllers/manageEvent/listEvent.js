@@ -7,6 +7,7 @@ import initEventModel from "../../models/eventModel.js";
 import initbatchModel from "../../models/batchModel.js";
 import initEventItm from "../../models/eventitmModel.js";
 import initstudentmodel from "../../models/studentModel.js";
+import moment from "moment";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -16,6 +17,13 @@ export default router.get("/", authenticate, async (req, res) => {
     }
 
     const event_type = req.query.event_type;
+    let order;
+    req.query.order == 1
+      ? (order = [["datetime", "ASC"]])
+      : (order = [["createdAt", "DESC"]]);
+
+    let limit;
+    req.query.limit ? (limit = req.query.limit) : "";
 
     let query = { isactive: STATE.ACTIVE };
 
@@ -87,12 +95,23 @@ export default router.get("/", authenticate, async (req, res) => {
         "batch_id",
         "createdAt",
       ],
-      order: [["createdAt", "DESC"]],
+      order: order,
+      limit: limit,
     });
 
     if (batchEvents.length == 0) {
       return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "batch events"));
     }
+
+    batchEvents = batchEvents.map((itm) => {
+      return {
+        ...itm.toJSON(),
+        datetime: moment
+          .utc(itm.datetime)
+          .tz("Europe/Berlin")
+          .format("YYYY-MM-DD HH:mm:ss"),
+      };
+    });
 
     return send(res, RESPONSE.SUCCESS, batchEvents);
   } catch (error) {
