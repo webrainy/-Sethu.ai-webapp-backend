@@ -51,21 +51,21 @@ export default router.put("/", authenticate, async (req, res) => {
           },
         });
 
-        let message = {
-          subject: `🎯 You’ve Been Assigned to a Batch!`,
+    //     let message = {
+    //       subject: `🎯 You’ve Been Assigned to a Batch!`,
 
-          text: `Dear ${student.name},
+    //       text: `Dear ${student.name},
     
-    You have been assigned to Batch ${batch.name} for your Python Training.
+    // You have been assigned to Batch ${batch.name} for your Python Training.
      
-    If you have any questions, feel free to reach out.
+    // If you have any questions, feel free to reach out.
     
     
-    Best Regards,  
-    Your Instructor`,
-        };
+    // Best Regards,  
+    // Your Instructor`,
+    //     };
 
-        sendEmails(student, message);
+    //     sendEmails(student, message);
 
         updates.current_state = current_state;
         updates.batch_id = batch_id;

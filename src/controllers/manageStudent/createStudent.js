@@ -250,47 +250,47 @@ export default router.post("/", authenticate, async (req, res) => {
         coverletter,
       });
 
-      let message = {
-        subject: `🎉 Welcome to Python Training – Let’s Begin!`,
+//       let message = {
+//         subject: `🎉 Welcome to Python Training – Let’s Begin!`,
 
-        text: `Dear ${student.name},
+//         text: `Dear ${student.name},
 
-Welcome aboard! 🚀 We are thrilled to have you in our **Python Training Course**. Get ready to embark on a journey where you will master Python, from basics to advanced concepts.
+// Welcome aboard! 🚀 We are thrilled to have you in our **Python Training Course**. Get ready to embark on a journey where you will master Python, from basics to advanced concepts.
 
-### What’s Next?  
-✅ Interactive live sessions  
-✅ Hands-on coding exercises  
-✅ Expert mentorship  
+// ### What’s Next?  
+// ✅ Interactive live sessions  
+// ✅ Hands-on coding exercises  
+// ✅ Expert mentorship  
 
-Stay tuned for your **login credentials** in the next email.
+// Stay tuned for your **login credentials** in the next email.
 
-If you have any questions, feel free to reach out.
+// If you have any questions, feel free to reach out.
 
-Happy Coding! 👨‍💻🐍  
+// Happy Coding! 👨‍💻🐍  
 
-Best Regards,  
-Your Instructor`,
-      };
+// Best Regards,  
+// Your Instructor`,
+//       };
 
-      sendEmails(student, message);
+//       sendEmails(student, message);
 
-      let message2 = {
-        subject: `🔑 Your Python Training Login Credentials`,
+//       let message2 = {
+//         subject: `🔑 Your Python Training Login Credentials`,
 
-        text: `Dear ${student.name},  
+//         text: `Dear ${student.name},  
 
-Welcome again to our **Python Training Course!** Below are your login credentials:  
+// Welcome again to our **Python Training Course!** Below are your login credentials:  
 
-🔹 **Portal Link:** http://103.212.120.217:5933/login
-🔹 **Username:** ${email}  
-🔹 **Password:** ${password}  
+// 🔹 **Portal Link:** http://103.212.120.217:5933/login
+// 🔹 **Username:** ${email}  
+// 🔹 **Password:** ${password}  
 
-See you in class! 🚀  
+// See you in class! 🚀  
 
-Best Regards,  
-Your Instructor`,
-      };
-      sendEmails(student, message2);
+// Best Regards,  
+// Your Instructor`,
+//       };
+//       sendEmails(student, message2);
 
       return send(res, RESPONSE.SUCCESS);
     });

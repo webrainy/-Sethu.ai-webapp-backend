@@ -80,12 +80,12 @@ export default router.post("/", authenticate, async (req, res) => {
           },
         });
 
-        let message = {
-          subject: `Assignment Notification`,
-          text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
-        };
+        // let message = {
+        //   subject: `Assignment Notification`,
+        //   text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
+        // };
 
-        sendEmails(student, message);
+        // sendEmails(student, message);
       }
     } else if (exstng_assign == EXISTING_ASSIGNMENT.YES) {
       if (assignment_id == "" || assignment_id == undefined) {
@@ -107,12 +107,12 @@ export default router.post("/", authenticate, async (req, res) => {
           },
         });
 
-        let message = {
-          subject: `Assignment Notification`,
-          text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
-        };
+        // let message = {
+        //   subject: `Assignment Notification`,
+        //   text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
+        // };
 
-        sendEmails(student, message);
+        // sendEmails(student, message);
       }
     }
 

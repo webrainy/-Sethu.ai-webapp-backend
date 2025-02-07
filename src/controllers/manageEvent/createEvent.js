@@ -86,16 +86,16 @@ export default router.post("/", authenticate, async (req, res) => {
         },
       });
 
-      let message = {
-        subject: `${
-          event_type == EVENT_TYPE.INTERVIEW ? `Interview` : `Event`
-        } Notification`,
-        text: `Hello ${student.name},\n\nYou have a new ${
-          event_type == EVENT_TYPE.INTERVIEW ? `interview` : `event`
-        }. Check your portal.\n\nBest,\nYour Instructor`,
-      };
+      // let message = {
+      //   subject: `${
+      //     event_type == EVENT_TYPE.INTERVIEW ? `Interview` : `Event`
+      //   } Notification`,
+      //   text: `Hello ${student.name},\n\nYou have a new ${
+      //     event_type == EVENT_TYPE.INTERVIEW ? `interview` : `event`
+      //   }. Check your portal.\n\nBest,\nYour Instructor`,
+      // };
 
-      sendEmails(student, message);
+      // sendEmails(student, message);
     }
     // }
 
