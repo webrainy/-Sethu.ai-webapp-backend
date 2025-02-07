@@ -1,6 +1,10 @@
 import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
 import initbatchModel from "./batchModel.js";
+import initinterviewModel from "./interviewModel.js";
+import initexamModel from "./examModel.js";
+import initaccountModel from "./accountModel.js";
+import { BATCH_STATE, CURRENT_STATE, DNC_STATE } from "../config/constants.js";
 
 const studentInfo = {
   student_id: {
@@ -130,13 +134,22 @@ const studentInfo = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  review: {
+  comment: {
     type: DataTypes.STRING,
     allowNull: true,
   },
   current_state: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    defaultValue: CURRENT_STATE.NOT_STARTED,
+  },
+  batch_state: {
+    type: DataTypes.INTEGER,
+    defaultValue: BATCH_STATE.NOT_ASSIGNED,
+  },
+  dnc_state: {
+    //Do not call again status
+    type: DataTypes.INTEGER,
+    default: DNC_STATE.CALL,
   },
   role: {
     type: DataTypes.INTEGER,
@@ -176,6 +189,48 @@ const initstudentmodel = async () => {
         name: "batch_id",
       },
       targetKey: "batch_id",
+    });
+
+    const interview = await initinterviewModel();
+    interview.belongsTo(student, {
+      as: "interviewInfo",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "interview_id",
+      },
+      targetKey: "interview_id",
+    });
+
+    const exam = await initexamModel();
+    exam.belongsTo(student, {
+      as: "examInfo",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "exam_id",
+      },
+      targetKey: "exam_id",
+    });
+
+    const reviewer = await initaccountModel();
+    reviewer.hasMany(student, {
+      as: "reviewerInfo",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "reviewer_id",
+      },
+      targetKey: "reviewer_id",
+    });
+    student.belongsTo(reviewer, {
+      as: "reviewerInfo",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "reviewer_id",
+      },
+      targetKey: "reviewer_id",
     });
 
     await student.sync({ alter: true });

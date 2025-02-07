@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
 
-const adminModel = {
-  admin_id: {
+const accountModel = {
+  account_id: {
     primaryKey: true,
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -27,10 +27,6 @@ const adminModel = {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  // fcm_token: {
-  //   type: DataTypes.STRING,
-  //   allowNull: true,
-  // },
 
   isactive: {
     type: DataTypes.INTEGER,
@@ -38,19 +34,19 @@ const adminModel = {
   },
 };
 
-let admin = null;
-const initadminModel = async () => {
+let account = null;
+const initaccountModel = async () => {
   try {
-    if (admin) return admin;
+    if (account) return account;
     const sequelize = await getConnection();
-    admin = sequelize.define("adminmodel", adminModel, {
+    account = sequelize.define("accountmodel", accountModel, {
       freezeTableName: true,
     });
-    await admin.sync({ alter: true });
-    return admin;
+    await account.sync({ alter: true });
+    return account;
   } catch (err) {
-    console.log("admin model", err.message);
+    console.log("account model", err.message);
   }
 };
 
-export default initadminModel;
+export default initaccountModel;

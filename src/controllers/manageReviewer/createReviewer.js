@@ -1,14 +1,9 @@
 import { Router } from "express";
 import { send, setErrResMsg } from "../../helper/responseHelper.js";
 import { RESPONSE } from "../../config/global.js";
-import {
-  CURRENT_STATE,
-  HASH_ROUND,
-  ROLE,
-  STATE,
-} from "../../config/constants.js";
+import { HASH_ROUND, ROLE, STATE } from "../../config/constants.js";
 import bcrypt from "bcrypt";
-import initadminModel from "../../models/adminModel.js";
+import initaccountModel from "../../models/accountModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 
 const router = Router();
@@ -16,8 +11,10 @@ const router = Router();
 export default router.post("/", async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
+    let role;
+    req.query.role == ROLE.ADMIN ? (role = ROLE.ADMIN) : (role = ROLE.REVIEWER);
 
-    let adminModel = await initadminModel();
+    let accountModel = await initaccountModel();
     let studentModel = await initstudentmodel();
 
     if (name == "" || name == undefined) {
@@ -53,14 +50,14 @@ export default router.post("/", async (req, res) => {
       return send(res, setErrResMsg(RESPONSE.INVALID, "password pattern"));
     }
 
-    let isphoneExist = await adminModel.findOne({
+    let isphoneExist = await accountModel.findOne({
       where: {
         isactive: STATE.ACTIVE,
         phone,
       },
     });
 
-    let isemailExist = await adminModel.findOne({
+    let isemailExist = await accountModel.findOne({
       where: {
         isactive: STATE.ACTIVE,
         email,
@@ -96,15 +93,15 @@ export default router.post("/", async (req, res) => {
 
     const encryptedPassword = await bcrypt.hash(password, HASH_ROUND);
 
-    await adminModel.create({
+    await accountModel.create({
       ...req.body,
-      role: ROLE.ADMIN,
+      role: role,
       password: encryptedPassword,
     });
 
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {
-    console.log("create admin", err);
+    console.log("create account", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

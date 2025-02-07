@@ -6,7 +6,7 @@ import initstudentModel from "../../models/studentModel.js";
 import authenticate from "../../middlewares/authenticate.js";
 import { Op } from "sequelize";
 import { deletefile } from "../../middlewares/deleteFile.js";
-import initadminModel from "../../models/adminModel.js";
+import initaccountModel from "../../models/accountModel.js";
 import image from "../../middlewares/uploads.js";
 const imagedir = "document/";
 const uploads = image(imagedir).fields([
@@ -71,7 +71,7 @@ export default router.put("/", authenticate, async (req, res) => {
       } = req.body;
 
       let studentModel = await initstudentModel();
-      let adminModel = await initadminModel();
+      let accountModel = await initaccountModel();
 
       if (name && name != undefined) {
         updates.name = name;
@@ -83,7 +83,7 @@ export default router.put("/", authenticate, async (req, res) => {
           return send(res, setErrResMsg(RESPONSE.INVALID, "Phone"));
         }
 
-        let isadminPhone = await adminModel.findOne({
+        let isaccountPhone = await accountModel.findOne({
           where: {
             isactive: STATE.ACTIVE,
             phone,
@@ -98,7 +98,7 @@ export default router.put("/", authenticate, async (req, res) => {
           },
         });
 
-        if (isphoneExist && isadminPhone) {
+        if (isphoneExist && isaccountPhone) {
           deletefile(`public/${imagedir}`, filename);
 
           return send(
@@ -119,7 +119,7 @@ export default router.put("/", authenticate, async (req, res) => {
           return send(res, setErrResMsg(RESPONSE.INVALID, "Email"));
         }
 
-        let isadminEmail = await adminModel.findOne({
+        let isaccountEmail = await accountModel.findOne({
           where: {
             isactive: STATE.ACTIVE,
             email,
@@ -132,7 +132,7 @@ export default router.put("/", authenticate, async (req, res) => {
             email,
           },
         });
-        if (isemailExist && isadminEmail) {
+        if (isemailExist && isaccountEmail) {
           deletefile(`public/${imagedir}`, filename);
           return send(
             res,
