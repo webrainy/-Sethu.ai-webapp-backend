@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
+import initstudentmodel from "./studentModel.js";
 
 const examModel = {
   exam_id: {
@@ -7,16 +8,8 @@ const examModel = {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
   },
-  exam_title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   exam_datetime: {
     type: DataTypes.DATE,
-    allowNull: true,
-  },
-  exam_url: {
-    type: DataTypes.STRING,
     allowNull: true,
   },
   exam_result: {
@@ -24,7 +17,7 @@ const examModel = {
     allowNull: false,
   },
   exam_marks: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   isactive: {
@@ -40,6 +33,17 @@ const initexamModel = async () => {
     const sequelize = await getConnection();
     exam = sequelize.define("exam", examModel, {
       freezeTableName: true,
+    });
+
+    const student = await initstudentmodel();
+    student.hasMany(exam, {
+      as: "examInfo",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: false,
+        name: "student_id",
+      },
+      targetKey: "student_id",
     });
 
     await exam.sync({ alter: true });

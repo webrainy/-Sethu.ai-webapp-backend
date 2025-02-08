@@ -4,6 +4,8 @@ import { RESPONSE } from "../../config/global.js";
 import {
   BATCH_STATE,
   CURRENT_STATE,
+  FIELDS,
+  RESULT,
   ROLE,
   STATE,
 } from "../../config/constants.js";
@@ -11,6 +13,8 @@ import initbatchModel from "../../models/batchModel.js";
 import initstudentModel from "../../models/studentModel.js";
 import authenticate from "../../middlewares/authenticate.js";
 import { sendEmails } from "../../middlewares/emailMessage.js";
+import initexamModel from "../../models/examModel.js";
+import initinterviewModel from "../../models/interviewModel.js";
 
 const router = Router();
 
@@ -24,25 +28,21 @@ export default router.put("/", authenticate, async (req, res) => {
     const {
       current_state,
       batch_state,
-      review_state,
-      reviewer_id,
       dnc_state,
       comment,
       batch_id,
       account_id,
-      exam_title,
       exam_datetime,
-      exam_url,
       exam_result,
       exam_marks,
-      int_title,
-      int_url,
       int_datetime,
       int_result,
     } = req.body;
 
     let studentModel = await initstudentModel();
     let batchModel = await initbatchModel();
+    let examModel = await initexamModel();
+    let interviewModel = await initinterviewModel();
 
     let updates = {};
 
@@ -60,8 +60,71 @@ export default router.put("/", authenticate, async (req, res) => {
     if (dnc_state && dnc_state != undefined) {
       updates.dnc_state = dnc_state;
     }
+    if (account_id && account_id != undefined) {
+      updates.account_id = account_id;
+    }
+
+    if (exam_datetime && exam_datetime != undefined) {
+      let exam = await examModel.findOne({
+        where: {
+          student_id,
+        },
+      });
+
+      if (exam) {
+        await examModel.update(
+          {
+            exam_datetime,
+            exam_result: exam_result ? exam_result : RESULT.PENDING,
+            exam_marks: exam_marks ? exam_marks : null,
+          },
+          {
+            where: { exam_id: exam.exam_id },
+          }
+        );
+      } else {
+        await examModel.create({
+          exam_datetime,
+          exam_result: exam_result ? exam_result : RESULT.PENDING,
+          exam_marks: exam_marks ? exam_marks : null,
+          student_id: student_id,
+        });
+      }
+    }
+
+    if (int_datetime && int_datetime != undefined) {
+      let interview = await interviewModel.findOne({
+        where: {
+          student_id,
+        },
+      });
+
+      if (interview) {
+        await interviewModel.update(
+          {
+            int_datetime,
+            int_result: int_result ? int_result : RESULT.PENDING,
+          },
+          {
+            where: { interview_id: interview.interview_id },
+          }
+        );
+      } else {
+        await interviewModel.create({
+          int_datetime,
+          int_result: int_result ? int_result : RESULT.PENDING,
+          student_id
+        });
+      }
+    }
 
     if (current_state == CURRENT_STATE.IN_PROGRESS) {
+      if (account_id && account_id != undefined) {
+        updates.account_id = account_id;
+      } else {
+        updates.account_id = req.user.id;
+      }
+
       updates.current_state = CURRENT_STATE.IN_PROGRESS;
     } else if (current_state == CURRENT_STATE.ACCEPTED) {
       updates.current_state = CURRENT_STATE.ACCEPTED;
@@ -79,6 +142,7 @@ export default router.put("/", authenticate, async (req, res) => {
           return send(res, setErrResMsg(RESPONSE.REQUIRED, "batch_id"));
         } else {
           {
+            //send grid
             let batch = await batchModel.findOne({
               where: {
                 batch_id,
@@ -111,32 +175,15 @@ export default router.put("/", authenticate, async (req, res) => {
           updates.batch_id = batch_id;
         }
       } else {
-        updates.batch_id = BATCH_STATE.NOT_ASSIGNED;
+        updates.batch_state = BATCH_STATE.NOT_ASSIGNED;
       }
     }
 
-    if (review_state && review_state != undefined) {
-      if (review_state == BATCH_STATE.ASSIGNED) {
-        if (reviewer_id == "" || reviewer_id == undefined) {
-          return send(res, setErrResMsg(RESPONSE.REQUIRED, "reviewer_id"));
-        } else {
-          updates.batch_state = BATCH_STATE.ASSIGNED;
-          updates.batch_id = batch_id;
-        }
-      } else {
-        updates.batch_id = BATCH_STATE.NOT_ASSIGNED;
-      }
-    }
-
-    // } else {
-    //   updates.current_state = current_state;
-    //   updates.batch_id = null;
-    // }
-
-    // await studentModel.update(updates, {
-    //   where: { student_id: student_id },
-    // });
-
+    await studentModel.update(updates, {
+      where: {
+        student_id: student_id,
+      },
+    });
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {
     console.log("Update student", err);

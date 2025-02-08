@@ -51,7 +51,10 @@ export const DNC_STATE = {
   CALL: 1,
   DONT_CALL: 2,
 };
-
+export const FIELDS = {
+  AVAILABLE: 1,
+  NOT_AVAILABLE: 2,
+};
 export const STATE = {
   ACTIVE: 1,
   INACTIVE: 0,

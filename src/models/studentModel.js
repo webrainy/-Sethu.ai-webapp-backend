@@ -116,9 +116,13 @@ const studentInfo = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  coverletter: {
+  // coverletter: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
+  profile: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 
   //other info
@@ -135,7 +139,7 @@ const studentInfo = {
     allowNull: false,
   },
   comment: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(1000),
     allowNull: true,
   },
   current_state: {
@@ -153,6 +157,10 @@ const studentInfo = {
   },
   role: {
     type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  registered_on: {
+    type: DataTypes.DATE,
     allowNull: false,
   },
   isactive: {
@@ -191,46 +199,25 @@ const initstudentmodel = async () => {
       targetKey: "batch_id",
     });
 
-    const interview = await initinterviewModel();
-    interview.belongsTo(student, {
-      as: "interviewInfo",
-      onDelete: "cascade",
-      foreignKey: {
-        allowNull: true,
-        name: "interview_id",
-      },
-      targetKey: "interview_id",
-    });
-
-    const exam = await initexamModel();
-    exam.belongsTo(student, {
-      as: "examInfo",
-      onDelete: "cascade",
-      foreignKey: {
-        allowNull: true,
-        name: "exam_id",
-      },
-      targetKey: "exam_id",
-    });
-
     const reviewer = await initaccountModel();
     reviewer.hasMany(student, {
-      as: "reviewerInfo",
+      as: "studentInfo",
       onDelete: "cascade",
       foreignKey: {
         allowNull: true,
-        name: "reviewer_id",
+        name: "account_id",
       },
-      targetKey: "reviewer_id",
+      targetKey: "account_id",
     });
+
     student.belongsTo(reviewer, {
       as: "reviewerInfo",
       onDelete: "cascade",
       foreignKey: {
         allowNull: true,
-        name: "reviewer_id",
+        name: "account_id",
       },
-      targetKey: "reviewer_id",
+      targetKey: "account_id",
     });
 
     await student.sync({ alter: true });

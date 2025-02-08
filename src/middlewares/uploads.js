@@ -20,7 +20,10 @@ const fileFilter = (req, file, cb) => {
     file.mimetype.includes("application/pdf") ||
     file.mimetype.includes(
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
+    ) ||
+    file.mimetype.includes("image/png") ||
+    file.mimetype.includes("image/jpeg") ||
+    file.mimetype.includes("image/jpg")
   ) {
     cb(null, true);
   } else {

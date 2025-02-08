@@ -7,6 +7,9 @@ import { ROLE, STATE } from "../../config/constants.js";
 
 import initbatchModel from "../../models/batchModel.js";
 import { Op } from "sequelize";
+import initaccountModel from "../../models/accountModel.js";
+import initinterviewModel from "../../models/interviewModel.js";
+import initexamModel from "../../models/examModel.js";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -27,6 +30,9 @@ export default router.get("/", authenticate, async (req, res) => {
 
     const studentModel = await initstudentModel();
     const batchModel = await initbatchModel();
+    const accountModel = await initaccountModel();
+    const interviewModel = await initinterviewModel();
+    const examModel = await initexamModel();
 
     req.query.searchkey
       ? (query.name = {
@@ -47,6 +53,24 @@ export default router.get("/", authenticate, async (req, res) => {
           model: batchModel,
           as: "batchInfo",
           attributes: ["batch_id", "name"],
+        },
+        {
+          model: examModel,
+          as: "examInfo",
+          attributes: ["exam_id", "exam_datetime", "exam_result", "exam_marks"],
+          required: false,
+        },
+        {
+          model: interviewModel,
+          as: "interviewInfo",
+          attributes: ["interview_id", "int_datetime", "int_result"],
+          required: false,
+        },
+        {
+          model: accountModel,
+          as: "reviewerInfo",
+          attributes: ["account_id", "name", "phone", "email"],
+          required: false,
         },
       ],
       where: query,
@@ -74,12 +98,16 @@ export default router.get("/", authenticate, async (req, res) => {
         "linkedin_url",
         "github_url",
         "resume",
-        "coverletter",
         "father_occ",
         "mother_occ",
         "income",
-        "review",
+        "profile",
+        "comment",
         "current_state",
+        "batch_state",
+        "dnc_state",
+        "registered_on",
+        "createdAt",
       ],
       order: [["createdAt", "DESC"]],
       offset: skip,
@@ -94,7 +122,7 @@ export default router.get("/", authenticate, async (req, res) => {
       return {
         ...itm.toJSON(),
         resume: "/document/" + itm.resume,
-        coverletter: "/document/" + itm.coverletter,
+        profile: "/document/" + itm.profile,
       };
     });
 

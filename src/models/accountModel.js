@@ -27,7 +27,6 @@ const accountModel = {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-
   isactive: {
     type: DataTypes.INTEGER,
     defaultValue: 1,

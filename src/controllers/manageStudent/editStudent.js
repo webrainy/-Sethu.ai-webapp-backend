@@ -11,7 +11,7 @@ import image from "../../middlewares/uploads.js";
 const imagedir = "document/";
 const uploads = image(imagedir).fields([
   { name: "resume", maxCount: 1 },
-  { name: "coverletter", maxCount: 1 },
+  { name: "profile", maxCount: 1 },
 ]);
 const router = Router();
 
@@ -33,11 +33,11 @@ export default router.put("/", authenticate, async (req, res) => {
           filename.push(req.files.resume[0].filename);
         }
         if (
-          req.files.coverletter != undefined &&
-          req.files.coverletter.length > 0
+          req.files.profile != undefined &&
+          req.files.profile.length > 0
         ) {
-          updates.coverletter = req.files.coverletter[0].filename;
-          filename.push(req.files.coverletter[0].filename);
+          updates.profile = req.files.profile[0].filename;
+          filename.push(req.files.profile[0].filename);
         }
       }
 
