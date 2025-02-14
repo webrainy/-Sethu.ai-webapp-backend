@@ -4,7 +4,6 @@ import { RESPONSE } from "../../config/global.js";
 import {
   BATCH_STATE,
   CURRENT_STATE,
-  FIELDS,
   RESULT,
   ROLE,
   STATE,
@@ -20,9 +19,9 @@ const router = Router();
 
 export default router.put("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     const student_id = req.query.student_id;
     const {
@@ -59,9 +58,6 @@ export default router.put("/", authenticate, async (req, res) => {
     }
     if (dnc_state && dnc_state != undefined) {
       updates.dnc_state = dnc_state;
-    }
-    if (account_id && account_id != undefined) {
-      updates.account_id = account_id;
     }
 
     if (exam_datetime && exam_datetime != undefined) {
@@ -113,27 +109,19 @@ export default router.put("/", authenticate, async (req, res) => {
         await interviewModel.create({
           int_datetime,
           int_result: int_result ? int_result : RESULT.PENDING,
-          student_id
+          student_id,
         });
       }
     }
 
-    if (current_state == CURRENT_STATE.IN_PROGRESS) {
-      if (account_id && account_id != undefined) {
-        updates.account_id = account_id;
-      } else {
-        updates.account_id = req.user.id;
-      }
-
-      updates.current_state = CURRENT_STATE.IN_PROGRESS;
-    } else if (current_state == CURRENT_STATE.ACCEPTED) {
-      updates.current_state = CURRENT_STATE.ACCEPTED;
-    } else if (current_state == CURRENT_STATE.FOLLOW_UP) {
-      updates.current_state = CURRENT_STATE.FOLLOW_UP;
-    } else if (current_state == CURRENT_STATE.REJECTED) {
+    if (current_state == CURRENT_STATE.REJECTED) {
       updates.current_state = CURRENT_STATE.REJECTED;
-    } else if (current_state == CURRENT_STATE.UNABLE_TO_DECIDE) {
-      updates.current_state = CURRENT_STATE.UNABLE_TO_DECIDE;
+    } else {
+      updates.current_state = current_state;
+    }
+
+    if (account_id && account_id != undefined) {
+      updates.account_id = account_id;
     }
 
     if (batch_state && batch_state != undefined) {
@@ -141,36 +129,30 @@ export default router.put("/", authenticate, async (req, res) => {
         if (batch_id == "" || batch_id == undefined) {
           return send(res, setErrResMsg(RESPONSE.REQUIRED, "batch_id"));
         } else {
+          //send grid
+          let batch = await batchModel.findOne({
+            where: {
+              batch_id,
+            },
+          });
+
+          let student = await studentModel.findOne({
+            where: {
+              student_id,
+            },
+          });
           {
-            //send grid
-            let batch = await batchModel.findOne({
-              where: {
-                batch_id,
-              },
-            });
-
-            let student = await studentModel.findOne({
-              where: {
-                student_id,
-              },
-            });
-
             //     let message = {
             //       subject: `🎯 You’ve Been Assigned to a Batch!`,
-
             //       text: `Dear ${student.name},
-
             // You have been assigned to Batch ${batch.name} for your Python Training.
-
             // If you have any questions, feel free to reach out.
-
             // Best Regards,
             // Your Instructor`,
             //     };
-
             //     sendEmails(student, message);
           }
-
+          student.selected_on == null ? (updates.selected_on = new Date()) : "";
           updates.batch_state = BATCH_STATE.ASSIGNED;
           updates.batch_id = batch_id;
         }

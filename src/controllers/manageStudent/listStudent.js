@@ -10,6 +10,7 @@ import { Op } from "sequelize";
 import initaccountModel from "../../models/accountModel.js";
 import initinterviewModel from "../../models/interviewModel.js";
 import initexamModel from "../../models/examModel.js";
+import moment from "moment";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -52,7 +53,17 @@ export default router.get("/", authenticate, async (req, res) => {
         {
           model: batchModel,
           as: "batchInfo",
-          attributes: ["batch_id", "name"],
+          attributes: [
+            "batch_id",
+            "name",
+            "start_date",
+            "end_date",
+            "technologies",
+            "tutor",
+            "lab_coordinator",
+            "planned_hour",
+            "actual_hour",
+          ],
         },
         {
           model: examModel,
@@ -107,6 +118,7 @@ export default router.get("/", authenticate, async (req, res) => {
         "batch_state",
         "dnc_state",
         "registered_on",
+        "selected_on",
         "createdAt",
       ],
       order: [["createdAt", "DESC"]],
@@ -123,6 +135,59 @@ export default router.get("/", authenticate, async (req, res) => {
         ...itm.toJSON(),
         resume: "/document/" + itm.resume,
         profile: "/document/" + itm.profile,
+        registered_on: itm.registered_on
+          ? moment
+              .utc(itm.registered_on)
+              .tz("Europe/Berlin")
+              .format("YYYY-MM-DD HH:mm:ss")
+          : null,
+        selected_on: itm.selected_on
+          ? moment
+              .utc(itm.selected_on)
+              .tz("Europe/Berlin")
+              .format("YYYY-MM-DD HH:mm:ss")
+          : null,
+        createdAt: itm.createdAt
+          ? moment
+              .utc(itm.createdAt)
+              .tz("Europe/Berlin")
+              .format("YYYY-MM-DD HH:mm:ss")
+          : null,
+        batchInfo: {
+          ...itm.batchInfo?.toJSON(),
+          start_date:
+            itm.batchInfo?.start_date != null
+              ? moment
+                  .utc(itm.batchInfo.start_date)
+                  .tz("Europe/Berlin")
+                  .format("YYYY-MM-DD HH:mm:ss")
+              : null,
+          end_date:
+            itm.batchInfo?.end_date != null
+              ? moment
+                  .utc(itm.batchInfo.end_date)
+                  .tz("Europe/Berlin")
+                  .format("YYYY-MM-DD HH:mm:ss")
+              : null,
+        },
+        examInfo: itm.examInfo.map((exm) => ({
+          ...exm.toJSON(),
+          exam_datetime: exm.exam_datetime
+            ? moment
+                .utc(exm.exam_datetime)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : null,
+        })),
+        interviewInfo: itm.interviewInfo.map((int) => ({
+          ...int.toJSON(),
+          int_datetime: int.int_datetime
+            ? moment
+                .utc(int.int_datetime)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : null,
+        })),
       };
     });
 

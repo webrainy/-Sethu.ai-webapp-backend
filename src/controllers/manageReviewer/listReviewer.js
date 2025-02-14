@@ -5,27 +5,83 @@ import { RESPONSE } from "../../config/global.js";
 import { ROLE, STATE } from "../../config/constants.js";
 import initaccountModel from "../../models/accountModel.js";
 import initstudentmodel from "../../models/studentModel.js";
+import initexamModel from "../../models/examModel.js";
+import initinterviewModel from "../../models/interviewModel.js";
+import { Op } from "sequelize";
+import initbatchModel from "../../models/batchModel.js";
+import moment from "moment";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
     const accountModel = await initaccountModel();
     const studentModel = await initstudentmodel();
+    const examModel = await initexamModel();
+    const interviewModel = await initinterviewModel();
+    const batchModel = await initbatchModel();
+
     let studentAttribute = [];
+    let stAttribute = [
+      "student_id",
+      "name",
+      "phone",
+      "email",
+      "location",
+      "education",
+      "cgpa",
+      "year_passed",
+      "gmat",
+      "course_prep",
+      "curnt_work",
+      "commit_ft",
+      "sk_python",
+      "sk_sql",
+      "sk_java",
+      "sk_analyticalskill",
+      "sk_prblmsolving",
+      "sk_engprof",
+      "hckr_rnk",
+      "hobbies",
+      "linkedin_url",
+      "github_url",
+      "resume",
+      "father_occ",
+      "mother_occ",
+      "income",
+      "profile",
+      "comment",
+      "current_state",
+      "batch_state",
+      "dnc_state",
+      "registered_on",
+      "createdAt",
+    ];
+    let batchAttribute = [];
+    let examAttribute = [];
+    let interviewAttribute = [];
+    let studentQuery = {};
+    req.query.searchkey
+      ? (studentQuery.name = { [Op.iLike]: `%${req.query.searchkey}%` })
+      : "";
+
     let query = {
       isactive: STATE.ACTIVE,
       role: ROLE.REVIEWER,
     };
-    1;
+
     if (req.user.role == ROLE.REVIEWER) {
       query.account_id = req.user.id;
-      studentAttribute = ["student_id", "name", "phone", "email"];
+      studentAttribute = stAttribute;
+      batchAttribute = ["batch_id", "name"];
+      examAttribute = ["exam_id", "exam_datetime", "exam_result", "exam_marks"];
+      interviewAttribute = ["interview_id", "int_datetime", "int_result"];
     } else if (req.query.account_id) {
       query.account_id = req.query.account_id;
-      studentAttribute = ["student_id", "name", "phone", "email"];
+      studentAttribute = stAttribute;
+      batchAttribute = ["batch_id", "name"];
+      examAttribute = ["exam_id", "exam_datetime", "exam_result", "exam_marks"];
+      interviewAttribute = ["interview_id", "int_datetime", "int_result"];
     }
-
-    console.log();
 
     let reviewerData = await accountModel.findAll({
       where: query,
@@ -36,6 +92,27 @@ export default router.get("/", authenticate, async (req, res) => {
           model: studentModel,
           as: "studentInfo",
           attributes: studentAttribute,
+          where: studentQuery,
+          include: [
+            {
+              model: batchModel,
+              as: "batchInfo",
+              attributes: batchAttribute,
+              required: false,
+            },
+            {
+              model: examModel,
+              as: "examInfo",
+              attributes: examAttribute,
+              required: false,
+            },
+            {
+              model: interviewModel,
+              as: "interviewInfo",
+              attributes: interviewAttribute,
+              required: false,
+            },
+          ],
         },
       ],
     });
@@ -43,6 +120,54 @@ export default router.get("/", authenticate, async (req, res) => {
     if (reviewerData.length == 0) {
       return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "reviewer data"));
     }
+
+    reviewerData = reviewerData.map((itm) => {
+      return {
+        ...itm.toJSON(),
+        studentInfo: itm?.studentInfo?.map((std) => ({
+          ...std.toJSON(),
+          resume: "/document/" + std.resume,
+          profile: std.profile ? "/document/" + std.profile : null,
+
+          batchInfo: {
+            ...itm.batchInfo?.toJSON(),
+            start_date:
+              itm.batchInfo?.start_date != null
+                ? moment
+                    .utc(itm.batchInfo.start_date)
+                    .tz("Europe/Berlin")
+                    .format("YYYY-MM-DD HH:mm:ss")
+                : null,
+            end_date:
+              itm.batchInfo?.end_date != null
+                ? moment
+                    .utc(itm.batchInfo.end_date)
+                    .tz("Europe/Berlin")
+                    .format("YYYY-MM-DD HH:mm:ss")
+                : null,
+          },
+
+          examInfo: std.examInfo.map((exm) => ({
+            ...exm.toJSON(),
+            exam_datetime: exm.exam_datetime
+              ? moment
+                  .utc(exm.exam_datetime)
+                  .tz("Europe/Berlin")
+                  .format("YYYY-MM-DD HH:mm:ss")
+              : null,
+          })),
+          interviewInfo: std.interviewInfo.map((int) => ({
+            ...int.toJSON(),
+            int_datetime: int.int_datetime
+              ? moment
+                  .utc(int.int_datetime)
+                  .tz("Europe/Berlin")
+                  .format("YYYY-MM-DD HH:mm:ss")
+              : null,
+          })),
+        })),
+      };
+    });
 
     return send(res, RESPONSE.SUCCESS, reviewerData);
   } catch (error) {

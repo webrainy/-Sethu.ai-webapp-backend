@@ -32,10 +32,7 @@ export default router.put("/", authenticate, async (req, res) => {
           updates.resume = req.files.resume[0].filename;
           filename.push(req.files.resume[0].filename);
         }
-        if (
-          req.files.profile != undefined &&
-          req.files.profile.length > 0
-        ) {
+        if (req.files.profile != undefined && req.files.profile.length > 0) {
           updates.profile = req.files.profile[0].filename;
           filename.push(req.files.profile[0].filename);
         }

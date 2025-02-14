@@ -163,6 +163,10 @@ const studentInfo = {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  selected_on: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
   isactive: {
     type: DataTypes.INTEGER,
     defaultValue: 1,

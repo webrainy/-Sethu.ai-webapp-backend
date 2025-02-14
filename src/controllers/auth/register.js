@@ -241,7 +241,7 @@ export default router.post("/", async (req, res) => {
 
       let student = await studentModel.create({
         ...req.body,
-        current_state: CURRENT_STATE.IN_PROGRESS,
+        current_state: CURRENT_STATE.NOT_STARTED,
         role: ROLE.STUDENT,
         password: encryptedPassword,
         resume,

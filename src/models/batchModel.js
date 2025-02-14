@@ -11,6 +11,38 @@ const batchModel = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  start_date: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  end_date: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  technologies: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  tutor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  lab_coordinator: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  planned_hour: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  actual_hour: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  comment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   isactive: {
     type: DataTypes.INTEGER,
     defaultValue: 1,
