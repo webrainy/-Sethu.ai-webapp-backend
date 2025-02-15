@@ -80,7 +80,7 @@ export default router.get("/", authenticate, async (req, res) => {
         end_date:
           itm.end_date != null
             ? moment
-                .utc(itm.start_date)
+                .utc(itm.end_date)
                 .tz("Europe/Berlin")
                 .format("YYYY-MM-DD HH:mm:ss")
             : "",
