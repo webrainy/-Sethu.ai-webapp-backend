@@ -12,9 +12,9 @@ const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     const event_type = req.query.event_type;
     let order;
@@ -83,6 +83,7 @@ export default router.get("/", authenticate, async (req, res) => {
                 "batch_state",
                 "dnc_state",
                 "registered_on",
+                "selected_on",
               ],
             },
           ],

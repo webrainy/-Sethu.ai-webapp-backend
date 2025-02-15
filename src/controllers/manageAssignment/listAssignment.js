@@ -8,9 +8,9 @@ const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     const batch_id = req.query.batch_id;
 

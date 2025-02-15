@@ -17,9 +17,9 @@ const router = Router();
 
 export default router.post("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     let {
       exstng_assign,

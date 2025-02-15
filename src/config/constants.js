@@ -2,6 +2,7 @@ export const ROLE = {
   ADMIN: 1,
   STUDENT: 2,
   REVIEWER: 3,
+  SUB_ADMIN: 4,
 };
 
 export const SKILL = {

@@ -54,6 +54,7 @@ export default router.get("/", authenticate, async (req, res) => {
       "batch_state",
       "dnc_state",
       "registered_on",
+      "selected_on",
       "createdAt",
     ];
     let batchAttribute = [];
@@ -93,6 +94,7 @@ export default router.get("/", authenticate, async (req, res) => {
           as: "studentInfo",
           attributes: studentAttribute,
           where: studentQuery,
+          required: false,
           include: [
             {
               model: batchModel,
@@ -128,7 +130,24 @@ export default router.get("/", authenticate, async (req, res) => {
           ...std.toJSON(),
           resume: "/document/" + std.resume,
           profile: std.profile ? "/document/" + std.profile : null,
-
+          registered_on: std.registered_on
+            ? moment
+                .utc(std.registered_on)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : null,
+          selected_on: std.selected_on
+            ? moment
+                .utc(std.selected_on)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : null,
+          createdAt: std.createdAt
+            ? moment
+                .utc(std.createdAt)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : null,
           batchInfo: {
             ...itm.batchInfo?.toJSON(),
             start_date:

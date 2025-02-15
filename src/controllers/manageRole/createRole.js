@@ -5,14 +5,19 @@ import { HASH_ROUND, ROLE, STATE } from "../../config/constants.js";
 import bcrypt from "bcrypt";
 import initaccountModel from "../../models/accountModel.js";
 import initstudentmodel from "../../models/studentModel.js";
+import authenticate from "../../middlewares/authenticate.js";
 
 const router = Router();
 
-export default router.post("/", async (req, res) => {
+export default router.post("/", authenticate, async (req, res) => {
   try {
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
+
     const { name, phone, email, password } = req.body;
     let role;
-    req.query.role == ROLE.ADMIN ? (role = ROLE.ADMIN) : (role = ROLE.REVIEWER);
+    req.query.role == ROLE.SUB_ADMIN ? (role = ROLE.SUB_ADMIN) : (role = ROLE.REVIEWER);
 
     let accountModel = await initaccountModel();
     let studentModel = await initstudentmodel();

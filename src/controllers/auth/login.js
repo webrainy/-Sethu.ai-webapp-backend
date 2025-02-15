@@ -42,14 +42,22 @@ export default router.post("/", async (req, res) => {
 
     let userData = accountData || studentData;
 
+    let response = {};
+
+    if (accountData) {
+      response = {
+        id: accountData.account_id,
+        role: accountData.role,
+        name: accountData.name,
+        phone: accountData.phone,
+        email: accountData.email,
+      };
+    } else if (studentData) {
+      response = { id: studentData.student_id, role: studentData.role };
+    }
+
     if (userData && (await bcrypt.compare(password, userData.password))) {
-      const token = jwt.sign(
-        {
-          id: accountData ? accountData.account_id : studentData.student_id,
-          role: accountData ? accountData.role : studentData.role,
-        },
-        process.env.TOKEN_KEY
-      );
+      const token = jwt.sign(response, process.env.TOKEN_KEY);
 
       return send(res, RESPONSE.SUCCESS, {
         role: accountData ? accountData.role : studentData.role,

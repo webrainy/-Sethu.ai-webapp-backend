@@ -1,5 +1,5 @@
 import authApiHandler from "./src/controllers/auth/apiHandler.js";
-import reviewerApiHandler from "./src/controllers/manageReviewer/apiHandler.js";
+import reviewerApiHandler from "./src/controllers/manageRole/apiHandler.js";
 import studentApiHandler from "./src/controllers/manageStudent/apiHandler.js";
 import batchApiHandler from "./src/controllers/manageBatch/apiHandler.js";
 import assignmentApiHandler from "./src/controllers/manageAssignment/apiHandler.js";
