@@ -5,14 +5,15 @@ import { RESPONSE } from "../../config/global.js";
 import initbatchModel from "../../models/batchModel.js";
 import { ROLE, STATE } from "../../config/constants.js";
 import initstudentmodel from "../../models/studentModel.js";
-import initassignmentModel from "../../models/assignment.js";
+import moment from "moment";
+import initaccountModel from "../../models/accountModel.js";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     let query = {
       isactive: STATE.ACTIVE,
@@ -27,20 +28,39 @@ export default router.get("/", authenticate, async (req, res) => {
           "name",
           "phone",
           "email",
-          "review",
+          "comment",
           "education",
           "current_state",
+          "batch_state",
+          "dnc_state",
+          "registered_on",
         ])
       : "";
 
     const batchModel = await initbatchModel();
     const studentModel = await initstudentmodel();
+    const accountModel = await initaccountModel();
 
     let batchData = await batchModel.findAll({
       where: query,
-      attributes: ["batch_id", "name"],
-
+      attributes: [
+        "batch_id",
+        "name",
+        "start_date",
+        "end_date",
+        "technologies",
+        "tutor",
+        "lab_coordinator",
+        "planned_hour",
+        "actual_hour",
+        "comment",
+      ],
       include: [
+        {
+          model: accountModel,
+          as: "createdBy",
+          attributes: ["account_id", "name", "phone", "email", "role"],
+        },
         {
           model: studentModel,
           as: "students",
@@ -54,11 +74,23 @@ export default router.get("/", authenticate, async (req, res) => {
       return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "batches"));
     }
 
-    batchData.map(async (itm) => {
+    batchData = batchData.map((itm) => {
       return {
-        batch_id: itm.batch_id,
-        name: itm.name,
-        students: itm.students,
+        ...itm.toJSON(),
+        start_date:
+          itm.start_date != null
+            ? moment
+                .utc(itm.start_date)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : "",
+        end_date:
+          itm.end_date != null
+            ? moment
+                .utc(itm.end_date)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : "",
       };
     });
 

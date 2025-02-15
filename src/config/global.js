@@ -35,6 +35,10 @@ export const RESPONSE = {
     code: 208,
     message: "",
   },
+  NOT_MATCH: {
+    code: 209,
+    message: "didn't match",
+  },
   INVALID_TOKEN: {
     code: 400,
     message: "Invalid token",

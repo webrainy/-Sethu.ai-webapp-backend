@@ -16,7 +16,15 @@ const storage = (dest) =>
 const maxSize = 1024 * 1024 * 5; // 5MB
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.includes("application/pdf")) {
+  if (
+    file.mimetype.includes("application/pdf") ||
+    file.mimetype.includes(
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) ||
+    file.mimetype.includes("image/png") ||
+    file.mimetype.includes("image/jpeg") ||
+    file.mimetype.includes("image/jpg")
+  ) {
     cb(null, true);
   } else {
     cb(new Error("Invalid file type"), false);

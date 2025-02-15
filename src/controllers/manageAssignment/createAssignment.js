@@ -17,9 +17,9 @@ const router = Router();
 
 export default router.post("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     let {
       exstng_assign,
@@ -64,6 +64,7 @@ export default router.post("/", authenticate, async (req, res) => {
         description,
         url,
         batch_id: batch_id,
+        account_id: req.user.id,
       });
 
       for (let i = 0; i < student_id.length; i++) {
@@ -80,12 +81,12 @@ export default router.post("/", authenticate, async (req, res) => {
           },
         });
 
-        let message = {
-          subject: `Assignment Notification`,
-          text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
-        };
+        // let message = {
+        //   subject: `Assignment Notification`,
+        //   text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
+        // };
 
-        sendEmails(student, message);
+        // sendEmails(student, message);
       }
     } else if (exstng_assign == EXISTING_ASSIGNMENT.YES) {
       if (assignment_id == "" || assignment_id == undefined) {
@@ -107,12 +108,12 @@ export default router.post("/", authenticate, async (req, res) => {
           },
         });
 
-        let message = {
-          subject: `Assignment Notification`,
-          text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
-        };
+        // let message = {
+        //   subject: `Assignment Notification`,
+        //   text: `Hello ${student.name},\n\nYou have a new assignment. Check your portal.\n\nBest,\nYour Instructor`,
+        // };
 
-        sendEmails(student, message);
+        // sendEmails(student, message);
       }
     }
 

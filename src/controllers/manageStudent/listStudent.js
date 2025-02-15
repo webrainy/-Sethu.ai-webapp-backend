@@ -7,6 +7,10 @@ import { ROLE, STATE } from "../../config/constants.js";
 
 import initbatchModel from "../../models/batchModel.js";
 import { Op } from "sequelize";
+import initaccountModel from "../../models/accountModel.js";
+import initinterviewModel from "../../models/interviewModel.js";
+import initexamModel from "../../models/examModel.js";
+import moment from "moment";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -27,6 +31,9 @@ export default router.get("/", authenticate, async (req, res) => {
 
     const studentModel = await initstudentModel();
     const batchModel = await initbatchModel();
+    const accountModel = await initaccountModel();
+    const interviewModel = await initinterviewModel();
+    const examModel = await initexamModel();
 
     req.query.searchkey
       ? (query.name = {
@@ -46,7 +53,41 @@ export default router.get("/", authenticate, async (req, res) => {
         {
           model: batchModel,
           as: "batchInfo",
-          attributes: ["batch_id", "name"],
+          attributes: [
+            "batch_id",
+            "name",
+            "start_date",
+            "end_date",
+            "technologies",
+            "tutor",
+            "lab_coordinator",
+            "planned_hour",
+            "actual_hour",
+          ],
+        },
+        {
+          model: examModel,
+          as: "examInfo",
+          attributes: ["exam_id", "exam_datetime", "exam_result", "exam_marks"],
+          required: false,
+        },
+        {
+          model: interviewModel,
+          as: "interviewInfo",
+          attributes: ["interview_id", "int_datetime", "int_result"],
+          required: false,
+        },
+        {
+          model: accountModel,
+          as: "reviewerInfo",
+          attributes: ["account_id", "name", "phone", "email"],
+          required: false,
+        },
+        {
+          model: accountModel,
+          as: "assignedBy",
+          attributes: ["account_id", "name", "phone", "email"],
+          required: false,
         },
       ],
       where: query,
@@ -74,12 +115,17 @@ export default router.get("/", authenticate, async (req, res) => {
         "linkedin_url",
         "github_url",
         "resume",
-        "coverletter",
         "father_occ",
         "mother_occ",
         "income",
-        "review",
+        "profile",
+        "comment",
         "current_state",
+        "batch_state",
+        "dnc_state",
+        "registered_on",
+        "selected_on",
+        "createdAt",
       ],
       order: [["createdAt", "DESC"]],
       offset: skip,
@@ -94,7 +140,60 @@ export default router.get("/", authenticate, async (req, res) => {
       return {
         ...itm.toJSON(),
         resume: "/document/" + itm.resume,
-        coverletter: "/document/" + itm.coverletter,
+        profile: "/document/" + itm.profile,
+        registered_on: itm.registered_on
+          ? moment
+              .utc(itm.registered_on)
+              .tz("Europe/Berlin")
+              .format("YYYY-MM-DD HH:mm:ss")
+          : null,
+        selected_on: itm.selected_on
+          ? moment
+              .utc(itm.selected_on)
+              .tz("Europe/Berlin")
+              .format("YYYY-MM-DD HH:mm:ss")
+          : null,
+        createdAt: itm.createdAt
+          ? moment
+              .utc(itm.createdAt)
+              .tz("Europe/Berlin")
+              .format("YYYY-MM-DD HH:mm:ss")
+          : null,
+        batchInfo: {
+          ...itm.batchInfo?.toJSON(),
+          start_date:
+            itm.batchInfo?.start_date != null
+              ? moment
+                  .utc(itm.batchInfo.start_date)
+                  .tz("Europe/Berlin")
+                  .format("YYYY-MM-DD HH:mm:ss")
+              : null,
+          end_date:
+            itm.batchInfo?.end_date != null
+              ? moment
+                  .utc(itm.batchInfo.end_date)
+                  .tz("Europe/Berlin")
+                  .format("YYYY-MM-DD HH:mm:ss")
+              : null,
+        },
+        examInfo: itm.examInfo.map((exm) => ({
+          ...exm.toJSON(),
+          exam_datetime: exm.exam_datetime
+            ? moment
+                .utc(exm.exam_datetime)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : null,
+        })),
+        interviewInfo: itm.interviewInfo.map((int) => ({
+          ...int.toJSON(),
+          int_datetime: int.int_datetime
+            ? moment
+                .utc(int.int_datetime)
+                .tz("Europe/Berlin")
+                .format("YYYY-MM-DD HH:mm:ss")
+            : null,
+        })),
       };
     });
 

@@ -6,12 +6,12 @@ import initstudentModel from "../../models/studentModel.js";
 import authenticate from "../../middlewares/authenticate.js";
 import { Op } from "sequelize";
 import { deletefile } from "../../middlewares/deleteFile.js";
-import initadminModel from "../../models/adminModel.js";
+import initaccountModel from "../../models/accountModel.js";
 import image from "../../middlewares/uploads.js";
 const imagedir = "document/";
 const uploads = image(imagedir).fields([
   { name: "resume", maxCount: 1 },
-  { name: "coverletter", maxCount: 1 },
+  { name: "profile", maxCount: 1 },
 ]);
 const router = Router();
 
@@ -32,12 +32,9 @@ export default router.put("/", authenticate, async (req, res) => {
           updates.resume = req.files.resume[0].filename;
           filename.push(req.files.resume[0].filename);
         }
-        if (
-          req.files.coverletter != undefined &&
-          req.files.coverletter.length > 0
-        ) {
-          updates.coverletter = req.files.coverletter[0].filename;
-          filename.push(req.files.coverletter[0].filename);
+        if (req.files.profile != undefined && req.files.profile.length > 0) {
+          updates.profile = req.files.profile[0].filename;
+          filename.push(req.files.profile[0].filename);
         }
       }
 
@@ -71,7 +68,7 @@ export default router.put("/", authenticate, async (req, res) => {
       } = req.body;
 
       let studentModel = await initstudentModel();
-      let adminModel = await initadminModel();
+      let accountModel = await initaccountModel();
 
       if (name && name != undefined) {
         updates.name = name;
@@ -83,7 +80,7 @@ export default router.put("/", authenticate, async (req, res) => {
           return send(res, setErrResMsg(RESPONSE.INVALID, "Phone"));
         }
 
-        let isadminPhone = await adminModel.findOne({
+        let isaccountPhone = await accountModel.findOne({
           where: {
             isactive: STATE.ACTIVE,
             phone,
@@ -98,7 +95,7 @@ export default router.put("/", authenticate, async (req, res) => {
           },
         });
 
-        if (isphoneExist && isadminPhone) {
+        if (isphoneExist && isaccountPhone) {
           deletefile(`public/${imagedir}`, filename);
 
           return send(
@@ -119,7 +116,7 @@ export default router.put("/", authenticate, async (req, res) => {
           return send(res, setErrResMsg(RESPONSE.INVALID, "Email"));
         }
 
-        let isadminEmail = await adminModel.findOne({
+        let isaccountEmail = await accountModel.findOne({
           where: {
             isactive: STATE.ACTIVE,
             email,
@@ -132,7 +129,7 @@ export default router.put("/", authenticate, async (req, res) => {
             email,
           },
         });
-        if (isemailExist && isadminEmail) {
+        if (isemailExist && isaccountEmail) {
           deletefile(`public/${imagedir}`, filename);
           return send(
             res,

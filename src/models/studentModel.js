@@ -1,6 +1,10 @@
 import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
 import initbatchModel from "./batchModel.js";
+import initinterviewModel from "./interviewModel.js";
+import initexamModel from "./examModel.js";
+import initaccountModel from "./accountModel.js";
+import { BATCH_STATE, CURRENT_STATE, DNC_STATE } from "../config/constants.js";
 
 const studentInfo = {
   student_id: {
@@ -112,9 +116,13 @@ const studentInfo = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  coverletter: {
+  // coverletter: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
+  profile: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 
   //other info
@@ -130,17 +138,34 @@ const studentInfo = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  review: {
-    type: DataTypes.STRING,
+  comment: {
+    type: DataTypes.STRING(1000),
     allowNull: true,
   },
   current_state: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    defaultValue: CURRENT_STATE.NOT_STARTED,
+  },
+  batch_state: {
+    type: DataTypes.INTEGER,
+    defaultValue: BATCH_STATE.NOT_ASSIGNED,
+  },
+  dnc_state: {
+    //Do not call again status
+    type: DataTypes.INTEGER,
+    default: DNC_STATE.CALL,
   },
   role: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  registered_on: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  selected_on: {
+    type: DataTypes.DATE,
+    allowNull: true,
   },
   isactive: {
     type: DataTypes.INTEGER,
@@ -176,6 +201,37 @@ const initstudentmodel = async () => {
         name: "batch_id",
       },
       targetKey: "batch_id",
+    });
+
+    const reviewer = await initaccountModel();
+    reviewer.hasMany(student, {
+      as: "studentInfo",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "account_id",
+      },
+      targetKey: "account_id",
+    });
+
+    student.belongsTo(reviewer, {
+      as: "reviewerInfo",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "account_id",
+      },
+      targetKey: "account_id",
+    });
+
+    student.belongsTo(reviewer, {
+      as: "assignedBy",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "acc_id",
+      },
+      targetKey: "account_id",
     });
 
     await student.sync({ alter: true });

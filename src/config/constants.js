@@ -1,6 +1,8 @@
 export const ROLE = {
   ADMIN: 1,
   STUDENT: 2,
+  REVIEWER: 3,
+  SUB_ADMIN: 4,
 };
 
 export const SKILL = {
@@ -12,9 +14,10 @@ export const SKILL = {
 };
 
 export const CURRENT_STATE = {
+  NOT_STARTED: 0,
   IN_PROGRESS: 1,
-  ASSIGNED: 2,
-  ACCEPTED: 3,
+  ACCEPTED: 2,
+  FOLLOW_UP: 3,
   REJECTED: 4,
   UNABLE_TO_DECIDE: 5,
 };
@@ -28,6 +31,26 @@ export const COMPLITION_STATUS = {
 export const EXISTING_ASSIGNMENT = {
   YES: 1,
   NO: 2,
+};
+
+export const EVENT_TYPE = {
+  EVENT: 1,
+  INTERVIEW: 2,
+};
+
+export const RESULT = {
+  PENDING: 0,
+  PASS: 1,
+  FAIL: 2,
+};
+
+export const BATCH_STATE = {
+  NOT_ASSIGNED: 1,
+  ASSIGNED: 2,
+};
+export const DNC_STATE = {
+  CALL: 1,
+  DONT_CALL: 2,
 };
 
 export const STATE = {

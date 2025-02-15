@@ -1,11 +1,10 @@
 import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
-import initstudentmodel from "./studentModel.js";
 import initbatchModel from "./batchModel.js";
 import initaccountModel from "./accountModel.js";
 
-const assignmentModel = {
-  assignment_id: {
+const eventModel = {
+  event_id: {
     primaryKey: true,
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -14,35 +13,39 @@ const assignmentModel = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  description: {
-    type: DataTypes.STRING,
+
+  datetime: {
+    type: DataTypes.DATE,
     allowNull: true,
   },
   url: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-
+  event_type: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   isactive: {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
 };
 
-let assignment = null;
-const initassignmentModel = async () => {
+let event = null;
+const initeventModel = async () => {
   try {
-    if (assignment) return assignment;
+    if (event) return event;
     const sequelize = await getConnection();
-    assignment = sequelize.define("assignment", assignmentModel, {
+    event = sequelize.define("event", eventModel, {
       freezeTableName: true,
     });
 
     const batch = await initbatchModel();
     // const student = await initstudentmodel();
 
-    assignment.belongsTo(batch, {
-      as: "batchAssignment",
+    event.belongsTo(batch, {
+      as: "batchInfo",
       onDelete: "cascade",
       foreignKey: {
         allowNull: true,
@@ -51,18 +54,8 @@ const initassignmentModel = async () => {
       targetKey: "batch_id",
     });
 
-    // assignment.belongsTo(student, {
-    //   as: "studentInfo",
-    //   onDelete: "cascade",
-    //   foreignKey: {
-    //     allowNull: true,
-    //     name: "student_id",
-    //   },
-    //   targetKey: "student_id",
-    // });
-
     const user = await initaccountModel();
-    assignment.belongsTo(user, {
+    event.belongsTo(user, {
       as: "createdBy",
       onDelete: "cascade",
       foreignKey: {
@@ -72,11 +65,11 @@ const initassignmentModel = async () => {
       targetKey: "account_id",
     });
 
-    await assignment.sync({ alter: true });
-    return assignment;
+    await event.sync({ alter: true });
+    return event;
   } catch (err) {
-    console.log("assignment model", err.message);
+    console.log("event model", err.message);
   }
 };
 
-export default initassignmentModel;
+export default initeventModel;

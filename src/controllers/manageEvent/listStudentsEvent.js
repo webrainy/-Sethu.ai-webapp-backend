@@ -3,10 +3,11 @@ import authenticate from "../../middlewares/authenticate.js";
 import { send, setErrResMsg } from "../../helper/responseHelper.js";
 import { RESPONSE } from "../../config/global.js";
 import { ROLE, STATE } from "../../config/constants.js";
-import initassignmentItmModel from "../../models/assignmentItm.js";
-import initassignmentModel from "../../models/assignment.js";
+import initeventItmModel from "../../models/eventitmModel.js";
+import initeventModel from "../../models/eventModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initbatchModel from "../../models/batchModel.js";
+import moment from "moment";
 import initaccountModel from "../../models/accountModel.js";
 const router = Router();
 
@@ -25,11 +26,23 @@ export default router.get("/", authenticate, async (req, res) => {
       }
     }
 
-    const assignmentItmModel = await initassignmentItmModel();
-    const assignmentModel = await initassignmentModel();
+    let query = {};
+
+    let limit;
+    req.query.limit ? (limit = req.query.limit) : "";
+
+    req.query.event_type ? (query.event_type = req.query.event_type) : "";
+
+    const eventItmModel = await initeventItmModel();
+    const eventModel = await initeventModel();
     const studentModel = await initstudentmodel();
     const batchModel = await initbatchModel();
     const accountModel = await initaccountModel();
+
+    let order;
+    req.query.order == 1
+      ? (order = [[{ model: eventModel, as: "eventInfo" }, "datetime", "ASC"]])
+      : (order = [["createdAt", "DESC"]]);
 
     let studentInfo = await studentModel.findAll({
       where: { isactive: STATE.ACTIVE, student_id: student_id },
@@ -43,20 +56,22 @@ export default router.get("/", authenticate, async (req, res) => {
       ],
     });
 
-    let assignments = await assignmentItmModel.findAll({
+    let events = await eventItmModel.findAll({
       where: {
         isactive: STATE.ACTIVE,
         student_id: student_id,
       },
       include: [
         {
-          model: assignmentModel,
-          as: "assignmentInfo",
+          model: eventModel,
+          as: "eventInfo",
+          where: query,
           attributes: [
-            "assignment_id",
+            "event_id",
             "title",
-            "description",
             "url",
+            "datetime",
+            "event_type",
             "batch_id",
           ],
           include: [
@@ -69,25 +84,27 @@ export default router.get("/", authenticate, async (req, res) => {
           ],
         },
       ],
-      attributes: [
-        "assign_id",
-        "compl_status",
-        "assigned_on",
-        "completed_at",
-        "student_id",
-        "assignment_id",
-        "createdAt",
-      ],
-      order: [["createdAt", "DESC"]],
+      attributes: ["ev_id", "student_id", "event_id", "createdAt"],
+      order: order,
+      limit: limit,
     });
 
-    // if (assignments.length == 0) {
-    //   return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "assignment"));
-    // }
+    events = events.map((itm) => {
+      return {
+        ...itm.toJSON(),
+        eventInfo: {
+          ...itm.eventInfo.toJSON(),
+          datetime: moment
+            .utc(itm.eventInfo.datetime)
+            .tz("Europe/Berlin")
+            .format("YYYY-MM-DD HH:mm:ss"),
+        },
+      };
+    });
 
-    return send(res, RESPONSE.SUCCESS, { studentInfo, assignments });
+    return send(res, RESPONSE.SUCCESS, { studentInfo, events });
   } catch (error) {
-    console.log("list students assignment", error);
+    console.log("list students event", error);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });
