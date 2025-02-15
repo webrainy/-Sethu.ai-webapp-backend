@@ -224,6 +224,16 @@ const initstudentmodel = async () => {
       targetKey: "account_id",
     });
 
+    student.belongsTo(reviewer, {
+      as: "assignedBy",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "acc_id",
+      },
+      targetKey: "account_id",
+    });
+
     await student.sync({ alter: true });
     return student;
   } catch (err) {

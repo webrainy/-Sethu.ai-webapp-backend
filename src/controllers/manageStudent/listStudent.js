@@ -83,6 +83,12 @@ export default router.get("/", authenticate, async (req, res) => {
           attributes: ["account_id", "name", "phone", "email"],
           required: false,
         },
+        {
+          model: accountModel,
+          as: "assignedBy",
+          attributes: ["account_id", "name", "phone", "email"],
+          required: false,
+        },
       ],
       where: query,
       attributes: [

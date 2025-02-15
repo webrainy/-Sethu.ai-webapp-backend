@@ -7,6 +7,7 @@ import initaccountModel from "../../models/accountModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initexamModel from "../../models/examModel.js";
 import initinterviewModel from "../../models/interviewModel.js";
+import CryptoJS from "crypto-js";
 import { Op } from "sequelize";
 import initbatchModel from "../../models/batchModel.js";
 import moment from "moment";
@@ -106,9 +107,22 @@ export default router.get("/", authenticate, async (req, res) => {
 
     let reviewerData = await accountModel.findAll({
       where: query,
-      attributes: ["account_id", "name", "phone", "email"],
+      attributes: [
+        "account_id",
+        "name",
+        "phone",
+        "email",
+        "password",
+        "account",
+      ],
       order: [["createdAt", "DESC"]],
       include: [
+        {
+          model: accountModel,
+          as: "createdBy",
+          attributes: ["account_id", "name", "phone", "email", "role"],
+          required: false,
+        },
         {
           model: studentModel,
           as: "studentInfo",
@@ -144,8 +158,11 @@ export default router.get("/", authenticate, async (req, res) => {
     }
 
     reviewerData = reviewerData.map((itm) => {
+      const bytes = CryptoJS.AES.decrypt(itm.password, process.env.TOKEN_KEY);
+      const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
       return {
         ...itm.toJSON(),
+        password: decryptPassword,
         studentInfo: itm?.studentInfo?.map((std) => ({
           ...std.toJSON(),
           resume: "/document/" + std.resume,

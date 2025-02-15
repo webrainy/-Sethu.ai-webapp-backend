@@ -72,6 +72,7 @@ export default router.post("/", authenticate, async (req, res) => {
       datetime,
       event_type,
       batch_id: batch_id,
+      account_id: req.user.id,
     });
 
     for (let i = 0; i < student_id.length; i++) {

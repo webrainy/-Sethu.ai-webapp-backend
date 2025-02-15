@@ -6,6 +6,7 @@ import initbatchModel from "../../models/batchModel.js";
 import { ROLE, STATE } from "../../config/constants.js";
 import initstudentmodel from "../../models/studentModel.js";
 import moment from "moment";
+import initaccountModel from "../../models/accountModel.js";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -38,6 +39,7 @@ export default router.get("/", authenticate, async (req, res) => {
 
     const batchModel = await initbatchModel();
     const studentModel = await initstudentmodel();
+    const accountModel = await initaccountModel();
 
     let batchData = await batchModel.findAll({
       where: query,
@@ -54,6 +56,11 @@ export default router.get("/", authenticate, async (req, res) => {
         "comment",
       ],
       include: [
+        {
+          model: accountModel,
+          as: "createdBy",
+          attributes: ["account_id", "name", "phone", "email", "role"],
+        },
         {
           model: studentModel,
           as: "students",

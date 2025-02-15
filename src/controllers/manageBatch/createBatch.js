@@ -9,9 +9,9 @@ const router = Router();
 
 export default router.post("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.ADMIN) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     const {
       name,
@@ -21,7 +21,8 @@ export default router.post("/", authenticate, async (req, res) => {
       tutor,
       lab_coordinator,
       planned_hour,
-      actual_hour,comment
+      actual_hour,
+      comment,
     } = req.body;
 
     let batchModel = await initbatchModel();
@@ -50,7 +51,7 @@ export default router.post("/", authenticate, async (req, res) => {
     if (actual_hour == "" || actual_hour == undefined) {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "actual_hour"));
     }
-    
+
     let isBatchExists = await batchModel.findOne({
       where: {
         isactive: STATE.ACTIVE,
@@ -67,6 +68,7 @@ export default router.post("/", authenticate, async (req, res) => {
 
     await batchModel.create({
       ...req.body,
+      account_id: req.user.id,
     });
 
     return send(res, RESPONSE.SUCCESS);

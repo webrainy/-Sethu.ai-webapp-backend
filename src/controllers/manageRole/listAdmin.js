@@ -4,13 +4,8 @@ import { send, setErrResMsg } from "../../helper/responseHelper.js";
 import { RESPONSE } from "../../config/global.js";
 import { ROLE, STATE } from "../../config/constants.js";
 import initaccountModel from "../../models/accountModel.js";
-import initstudentmodel from "../../models/studentModel.js";
-import initexamModel from "../../models/examModel.js";
-import initinterviewModel from "../../models/interviewModel.js";
-import { Op } from "sequelize";
-import initbatchModel from "../../models/batchModel.js";
-import moment from "moment";
 const router = Router();
+import CryptoJS from "crypto-js";
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
@@ -23,13 +18,22 @@ export default router.get("/", authenticate, async (req, res) => {
 
     let adminData = await accountModel.findAll({
       where: query,
-      attributes: ["account_id", "name", "phone", "email"],
+      attributes: ["account_id", "name", "phone", "email", "password"],
       order: [["createdAt", "DESC"]],
     });
 
     if (adminData.length == 0) {
       return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "admin data"));
     }
+
+    adminData = adminData.map((itm) => {
+      const bytes = CryptoJS.AES.decrypt(itm.password, process.env.TOKEN_KEY);
+      const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
+      return {
+        ...itm.toJSON(),
+        password: decryptPassword,
+      };
+    });
 
     return send(res, RESPONSE.SUCCESS, adminData);
   } catch (error) {

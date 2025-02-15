@@ -3,6 +3,7 @@ import { send, setErrResMsg } from "../../helper/responseHelper.js";
 import { RESPONSE } from "../../config/global.js";
 import { BATCH_STATE, CURRENT_STATE, STATE } from "../../config/constants.js";
 import bcrypt from "bcrypt";
+import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 import initaccountModel from "../../models/accountModel.js";
 import { Op } from "sequelize";
@@ -56,13 +57,21 @@ export default router.post("/", async (req, res) => {
       response = { id: studentData.student_id, role: studentData.role };
     }
 
-    if (userData && (await bcrypt.compare(password, userData.password))) {
-      const token = jwt.sign(response, process.env.TOKEN_KEY);
+    // if (userData && (await bcrypt.compare(password, userData.password))) {
+    if (userData) {
+      const bytes = CryptoJS.AES.decrypt(
+        userData.password,
+        process.env.TOKEN_KEY
+      );
+      const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
+      if (decryptPassword == password) {
+        const token = jwt.sign(response, process.env.TOKEN_KEY);
 
-      return send(res, RESPONSE.SUCCESS, {
-        role: accountData ? accountData.role : studentData.role,
-        access_token: token,
-      });
+        return send(res, RESPONSE.SUCCESS, {
+          role: accountData ? accountData.role : studentData.role,
+          access_token: token,
+        });
+      }
     } else {
       return send(res, setErrResMsg(RESPONSE.INVALID, "Login credential"));
     }

@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
 import initstudentmodel from "./studentModel.js";
 import initbatchModel from "./batchModel.js";
+import initaccountModel from "./accountModel.js";
 
 const assignmentModel = {
   assignment_id: {
@@ -59,6 +60,17 @@ const initassignmentModel = async () => {
     //   },
     //   targetKey: "student_id",
     // });
+
+    const user = await initaccountModel();
+    assignment.belongsTo(user, {
+      as: "createdBy",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "account_id",
+      },
+      targetKey: "account_id",
+    });
 
     await assignment.sync({ alter: true });
     return assignment;

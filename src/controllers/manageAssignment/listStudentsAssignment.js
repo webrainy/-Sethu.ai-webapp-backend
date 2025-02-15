@@ -7,6 +7,7 @@ import initassignmentItmModel from "../../models/assignmentItm.js";
 import initassignmentModel from "../../models/assignment.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initbatchModel from "../../models/batchModel.js";
+import initaccountModel from "../../models/accountModel.js";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -28,6 +29,7 @@ export default router.get("/", authenticate, async (req, res) => {
     const assignmentModel = await initassignmentModel();
     const studentModel = await initstudentmodel();
     const batchModel = await initbatchModel();
+    const accountModel = await initaccountModel();
 
     let studentInfo = await studentModel.findAll({
       where: { isactive: STATE.ACTIVE, student_id: student_id },
@@ -56,6 +58,14 @@ export default router.get("/", authenticate, async (req, res) => {
             "description",
             "url",
             "batch_id",
+          ],
+          include: [
+            {
+              model: accountModel,
+              as: "createdBy",
+              attributes: ["account_id", "name", "phone", "email", "role"],
+              required: false,
+            },
           ],
         },
       ],

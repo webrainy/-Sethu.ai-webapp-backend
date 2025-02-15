@@ -8,6 +8,7 @@ import initeventModel from "../../models/eventModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initbatchModel from "../../models/batchModel.js";
 import moment from "moment";
+import initaccountModel from "../../models/accountModel.js";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -36,6 +37,7 @@ export default router.get("/", authenticate, async (req, res) => {
     const eventModel = await initeventModel();
     const studentModel = await initstudentmodel();
     const batchModel = await initbatchModel();
+    const accountModel = await initaccountModel();
 
     let order;
     req.query.order == 1
@@ -71,6 +73,14 @@ export default router.get("/", authenticate, async (req, res) => {
             "datetime",
             "event_type",
             "batch_id",
+          ],
+          include: [
+            {
+              model: accountModel,
+              as: "createdBy",
+              attributes: ["account_id", "name", "phone", "email", "role"],
+              required: false,
+            },
           ],
         },
       ],

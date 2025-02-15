@@ -10,17 +10,9 @@ import authenticate from "../../middlewares/authenticate.js";
 
 const router = Router();
 
-export default router.post("/", authenticate, async (req, res) => {
+export default router.post("/", async (req, res) => {
   try {
-    // if (req.user.role != ROLE.ADMIN) {
-    //   return send(res, RESPONSE.ACCESS_DENIED);
-    // }
-
     const { name, phone, email, password } = req.body;
-    let role;
-    req.query.role == ROLE.SUB_ADMIN
-      ? (role = ROLE.SUB_ADMIN)
-      : (role = ROLE.REVIEWER);
 
     let accountModel = await initaccountModel();
     let studentModel = await initstudentmodel();
@@ -107,9 +99,8 @@ export default router.post("/", authenticate, async (req, res) => {
 
     await accountModel.create({
       ...req.body,
-      role: role,
+      role: ROLE.ADMIN,
       password: encryptedPassword,
-      account: req.user.id,
     });
 
     return send(res, RESPONSE.SUCCESS);

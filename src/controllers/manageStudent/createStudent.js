@@ -9,7 +9,8 @@ import {
   STATE,
 } from "../../config/constants.js";
 import image from "../../middlewares/uploads.js";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
+import CryptoJS from "crypto-js";
 import { deletefile } from "../../middlewares/deleteFile.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initstudentmodel from "../../models/studentModel.js";
@@ -253,7 +254,11 @@ export default router.post("/", authenticate, async (req, res) => {
         );
       }
 
-      const encryptedPassword = await bcrypt.hash(password, HASH_ROUND);
+      // const encryptedPassword = await bcrypt.hash(password, HASH_ROUND);
+      const encryptedPassword = CryptoJS.AES.encrypt(
+        password,
+        process.env.SECRET_KEY
+      ).toString();
 
       let student = await studentModel.create({
         ...req.body,

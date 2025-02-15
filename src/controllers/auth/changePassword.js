@@ -9,7 +9,8 @@ import {
   STATE,
 } from "../../config/constants.js";
 import image from "../../middlewares/uploads.js";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
+import CryptoJS from "crypto-js";
 import { deletefile } from "../../middlewares/deleteFile.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initaccountmodel from "../../models/accountModel.js";
@@ -46,20 +47,34 @@ export default router.post("/", authenticate, async (req, res) => {
     }
 
     if (new_password != confirm_password) {
-      return send(res, setErrResMsg(RESPONSE.NOT_MATCH, "password & confirm password"));
+      return send(
+        res,
+        setErrResMsg(RESPONSE.NOT_MATCH, "password & confirm password")
+      );
     }
 
     const accountdata = await accountModel.findOne({
       where: { account_id: req.user.id },
     });
 
-    const validOldPassword = await bcrypt.compare(
-      old_password,
-      accountdata.password
-    );
+    // const validOldPassword = await bcrypt.compare(
+    //   old_password,
+    //   accountdata.password
+    // );
 
-    if (validOldPassword == true) {
-      const encryptPassword = await bcrypt.hash(new_password, HASH_ROUND);
+    const bytes = CryptoJS.AES.decrypt(
+      accountdata.password,
+      process.env.TOKEN_KEY
+    );
+    const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (decryptPassword == old_password) {
+      // const encryptPassword = await bcrypt.hash(new_password, HASH_ROUND);
+      const encryptPassword = CryptoJS.AES.encrypt(
+        new_password,
+        process.env.TOKEN_KEY
+      ).toString();
+
       await accountModel.update(
         { password: encryptPassword },
         { where: { account_id: req.user.id } }

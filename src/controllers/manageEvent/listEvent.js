@@ -8,6 +8,7 @@ import initbatchModel from "../../models/batchModel.js";
 import initEventItm from "../../models/eventitmModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import moment from "moment";
+import initaccountModel from "../../models/accountModel.js";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
@@ -34,9 +35,16 @@ export default router.get("/", authenticate, async (req, res) => {
 
     const batchModel = await initbatchModel();
     const studentModel = await initstudentmodel();
+    const accountModel = await initaccountModel();
 
     let batchEvents = await eventModel.findAll({
       include: [
+        {
+          model: accountModel,
+          as: "createdBy",
+          attributes: ["account_id", "name", "phone", "email", "role"],
+          required: false,
+        },
         {
           model: batchModel,
           as: "batchInfo",

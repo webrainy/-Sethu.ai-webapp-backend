@@ -122,6 +122,7 @@ export default router.put("/", authenticate, async (req, res) => {
 
     if (account_id && account_id != undefined) {
       updates.account_id = account_id;
+      updates.acc_id = req.user.id;
     }
 
     if (batch_state && batch_state != undefined) {
