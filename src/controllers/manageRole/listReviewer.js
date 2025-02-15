@@ -73,13 +73,33 @@ export default router.get("/", authenticate, async (req, res) => {
     if (req.user.role == ROLE.REVIEWER) {
       query.account_id = req.user.id;
       studentAttribute = stAttribute;
-      batchAttribute = ["batch_id", "name"];
+      batchAttribute = [
+        "batch_id",
+        "name",
+        "start_date",
+        "end_date",
+        "technologies",
+        "tutor",
+        "lab_coordinator",
+        "planned_hour",
+        "actual_hour",
+      ];
       examAttribute = ["exam_id", "exam_datetime", "exam_result", "exam_marks"];
       interviewAttribute = ["interview_id", "int_datetime", "int_result"];
     } else if (req.query.account_id) {
       query.account_id = req.query.account_id;
       studentAttribute = stAttribute;
-      batchAttribute = ["batch_id", "name"];
+      batchAttribute = [
+        "batch_id",
+        "name",
+        "start_date",
+        "end_date",
+        "technologies",
+        "tutor",
+        "lab_coordinator",
+        "planned_hour",
+        "actual_hour",
+      ];
       examAttribute = ["exam_id", "exam_datetime", "exam_result", "exam_marks"];
       interviewAttribute = ["interview_id", "int_datetime", "int_result"];
     }
@@ -149,18 +169,18 @@ export default router.get("/", authenticate, async (req, res) => {
                 .format("YYYY-MM-DD HH:mm:ss")
             : null,
           batchInfo: {
-            ...itm.batchInfo?.toJSON(),
+            ...std.batchInfo?.toJSON(),
             start_date:
-              itm.batchInfo?.start_date != null
+              std.batchInfo?.start_date != null
                 ? moment
-                    .utc(itm.batchInfo.start_date)
+                    .utc(std.batchInfo.start_date)
                     .tz("Europe/Berlin")
                     .format("YYYY-MM-DD HH:mm:ss")
                 : null,
             end_date:
-              itm.batchInfo?.end_date != null
+              std.batchInfo?.end_date != null
                 ? moment
-                    .utc(itm.batchInfo.end_date)
+                    .utc(std.batchInfo.end_date)
                     .tz("Europe/Berlin")
                     .format("YYYY-MM-DD HH:mm:ss")
                 : null,
