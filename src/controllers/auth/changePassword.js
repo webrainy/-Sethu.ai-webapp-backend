@@ -14,7 +14,7 @@ import CryptoJS from "crypto-js";
 import { deletefile } from "../../middlewares/deleteFile.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initaccountmodel from "../../models/accountModel.js";
-import { sendEmails } from "../../middlewares/emailMessage.js";
+// import { sendEmails } from "../../middlewares/emailMessage.js";
 import authenticate from "../../middlewares/authenticate.js";
 
 const imagedir = "document/";

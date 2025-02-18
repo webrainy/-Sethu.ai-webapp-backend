@@ -7,6 +7,7 @@ import CryptoJS from "crypto-js";
 import initaccountModel from "../../models/accountModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import authenticate from "../../middlewares/authenticate.js";
+import { resendMail } from "../../middlewares/resend.js";
 
 const router = Router();
 
@@ -111,6 +112,31 @@ export default router.post("/", authenticate, async (req, res) => {
       password: encryptedPassword,
       account: req.user.id,
     });
+
+    let message = {
+      subject: `Your Account Credentials for Sri Sathya Sai Skill Development Program`,
+
+      text: `Dear ${name},
+
+You have been added as a ${
+        role == ROLE.REVIEWER ? "Reviewer" : "Admin"
+      } in the Sri Sathya Sai Skill Development Program. Below are your login credentials:
+
+👤 Username: ${email}
+🔑 Temporary Password: ${password}
+
+Please log in using the credentials above and change your password upon first login for security purposes.
+
+If you have any questions or need assistance, feel free to reach out.
+
+Best regards,
+Program Coordinator
+Sri Sathya Sai Skill Development Program
+🌐 [www.sethu.ai](http://www.sethu.ai)
+📞 9052372023`,
+    };
+
+    resendMail(student, message);
 
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {
