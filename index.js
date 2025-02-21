@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 5932;
 import path from "path";
 const __dirname = path.resolve();
 import router from "./routes.js";
+import { resendMail } from "./src/middlewares/resend.js";
 
 app.use(cors());
 app.use(express.json());
@@ -16,6 +17,18 @@ app.use(express.static(path.join(__dirname, "public")));
 
 router(app);
 connectDB();
+
+
+
+app.post("/test", (req, res) => {
+  try {
+    resendMail()
+    res.send("OK");
+  } catch (error) {
+    console.log(error);
+    res.send("error");
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);

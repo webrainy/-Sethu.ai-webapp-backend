@@ -14,7 +14,8 @@ import CryptoJS from "crypto-js";
 import { deletefile } from "../../middlewares/deleteFile.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initaccountmodel from "../../models/accountModel.js";
-import { sendEmails } from "../../middlewares/emailMessage.js";
+// import { sendEmails } from "../../middlewares/emailMessage.js";
+import { resendMail } from "../../middlewares/resend.js";
 
 const imagedir = "document/";
 const uploads = image(imagedir).fields([
@@ -227,14 +228,14 @@ export default router.post("/", async (req, res) => {
         deletefile(`public/${imagedir}`, [resume, profile]);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone")
+          setErrResMsg(RESPONSE.ERR, "You are already registered with us. Please call us at the phone number on home page")
         );
       }
       if (isemailExist || isaccountEmail) {
         deletefile(`public/${imagedir}`, [resume, profile]);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email")
+          setErrResMsg(RESPONSE.ERR, "You are already registered with us. Please call us at the phone number on home page")
         );
       }
 
@@ -256,47 +257,31 @@ export default router.post("/", async (req, res) => {
         dnc_state: DNC_STATE.CALL,
       });
 
-      //       let message = {
-      //         subject: `🎉 Welcome to Python Training – Let’s Begin!`,
+      let message = {
+        subject: `Confirmation of Interest in Data Engineer Course`,
 
-      //         text: `Dear ${student.name},
+        text: `Dear ${student.name},
+        We are pleased to acknowledge your registration for the Data Engineer Course offered by the Sri Sathya Sai Skill Development Program.
+        
+        This comprehensive, in-person, three-month course is tailored for graduates or postgraduates with a keen interest in technology. The course is conducted by industry experts and is designed to equip participants with the necessary skills for a successful career in data engineering. Upon successful completion, participants will receive placement recommendations. This program is offered entirely free of charge as part of our commitment to nation-building.
+        
+        As the next step, you will be invited to an examination and interview to confirm your enrollment. Please monitor your email and mobile phone for further communication regarding the details.
+        
+        Please note that this is a system-generated email; do not reply to this message. Additionally, your application does not guarantee admission to the course.
+        
+        We trust that you have provided the correct contact information to ensure seamless communication.
+        
+        We wish you the very best in your endeavors.
+        
+Best regards,
+Program Coordinator
+Sri Sathya Sai Skill Development Program
+🌐 [www.sethu.ai](http://www.sethu.ai)
+📞 9052372023`,
+      };
 
-      // Welcome aboard! 🚀 We are thrilled to have you in our **Python Training Course**. Get ready to embark on a journey where you will master Python, from basics to advanced concepts.
-
-      // ### What’s Next?
-      // ✅ Interactive live sessions
-      // ✅ Hands-on coding exercises
-      // ✅ Expert mentorship
-
-      // Stay tuned for your **login credentials** in the next email.
-
-      // If you have any questions, feel free to reach out.
-
-      // Happy Coding! 👨‍💻🐍
-
-      // Best Regards,
-      // Your Instructor`,
-      //       };
-
-      //       sendEmails(student, message);
-
-      //       let message2 = {
-      //         subject: `🔑 Your Python Training Login Credentials`,
-
-      //         text: `Dear ${student.name},
-
-      // Welcome again to our **Python Training Course!** Below are your login credentials:
-
-      // 🔹 **Portal Link:** http://103.212.120.217:5933/login
-      // 🔹 **Username:** ${email}
-      // 🔹 **Password:** ${password}
-
-      // See you in class! 🚀
-
-      // Best Regards,
-      // Your Instructor`,
-      //       };
-      //       sendEmails(student, message2);
+      // sendEmails(student, message);
+      resendMail(student, message);
 
       return send(res, RESPONSE.SUCCESS);
     });
