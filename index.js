@@ -18,18 +18,6 @@ app.use(express.static(path.join(__dirname, "public")));
 router(app);
 connectDB();
 
-
-
-app.post("/test", (req, res) => {
-  try {
-    resendMail()
-    res.send("OK");
-  } catch (error) {
-    console.log(error);
-    res.send("error");
-  }
-});
-
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });
