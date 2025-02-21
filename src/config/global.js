@@ -39,6 +39,10 @@ export const RESPONSE = {
     code: 209,
     message: "didn't match",
   },
+  ERR: {
+    code: 210,
+    message: "",
+  },
   INVALID_TOKEN: {
     code: 400,
     message: "Invalid token",

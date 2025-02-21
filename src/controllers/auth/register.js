@@ -228,14 +228,14 @@ export default router.post("/", async (req, res) => {
         deletefile(`public/${imagedir}`, [resume, profile]);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone")
+          setErrResMsg(RESPONSE.ERR, "You are already registered with us. Please call us at the phone number on home page")
         );
       }
       if (isemailExist || isaccountEmail) {
         deletefile(`public/${imagedir}`, [resume, profile]);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email")
+          setErrResMsg(RESPONSE.ERR, "You are already registered with us. Please call us at the phone number on home page")
         );
       }
 
