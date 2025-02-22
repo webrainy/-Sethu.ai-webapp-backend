@@ -94,10 +94,11 @@ export default router.get("/", authenticate, async (req, res) => {
         ...itm.toJSON(),
         eventInfo: {
           ...itm.eventInfo.toJSON(),
-          datetime: moment
-            .utc(itm.eventInfo.datetime)
-            .tz("Europe/Berlin")
-            .format("YYYY-MM-DD HH:mm:ss"),
+          // datetime: moment
+          //   .utc(itm.eventInfo.datetime)
+          //   .tz("Europe/Berlin")
+          //   .format("YYYY-MM-DD HH:mm:ss"),
+          datetime: moment(itm.eventInfo.datetime).format("YYYY-MM-DD HH:mm:ss"),
         },
       };
     });

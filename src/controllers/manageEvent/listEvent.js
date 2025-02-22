@@ -118,10 +118,11 @@ export default router.get("/", authenticate, async (req, res) => {
     batchEvents = batchEvents.map((itm) => {
       return {
         ...itm.toJSON(),
-        datetime: moment
-          .utc(itm.datetime)
-          .tz("Europe/Berlin")
-          .format("YYYY-MM-DD HH:mm:ss"),
+        //   datetime: moment
+        //     .utc(itm.datetime)
+        //     .tz("Europe/Berlin")
+        //     .format("YYYY-MM-DD HH:mm:ss"),
+        datetime: moment(itm.datetime).format("YYYY-MM-DD HH:mm:ss"),
       };
     });
 

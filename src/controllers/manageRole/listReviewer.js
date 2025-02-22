@@ -160,6 +160,69 @@ export default router.get("/", authenticate, async (req, res) => {
     reviewerData = reviewerData.map((itm) => {
       const bytes = CryptoJS.AES.decrypt(itm.password, process.env.TOKEN_KEY);
       const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
+      // return {
+      //   ...itm.toJSON(),
+      //   password: decryptPassword,
+      //   studentInfo: itm?.studentInfo?.map((std) => ({
+      //     ...std.toJSON(),
+      //     resume: "/document/" + std.resume,
+      //     profile: std.profile ? "/document/" + std.profile : null,
+      //     registered_on: std.registered_on
+      //       ? moment
+      //           .utc(std.registered_on)
+      //           .tz("Europe/Berlin")
+      //           .format("YYYY-MM-DD HH:mm:ss")
+      //       : null,
+      //     selected_on: std.selected_on
+      //       ? moment
+      //           .utc(std.selected_on)
+      //           .tz("Europe/Berlin")
+      //           .format("YYYY-MM-DD HH:mm:ss")
+      //       : null,
+      //     createdAt: std.createdAt
+      //       ? moment
+      //           .utc(std.createdAt)
+      //           .tz("Europe/Berlin")
+      //           .format("YYYY-MM-DD HH:mm:ss")
+      //       : null,
+      //     batchInfo: {
+      //       ...std.batchInfo?.toJSON(),
+      //       start_date:
+      //         std.batchInfo?.start_date != null
+      //           ? moment
+      //               .utc(std.batchInfo.start_date)
+      //               .tz("Europe/Berlin")
+      //               .format("YYYY-MM-DD HH:mm:ss")
+      //           : null,
+      //       end_date:
+      //         std.batchInfo?.end_date != null
+      //           ? moment
+      //               .utc(std.batchInfo.end_date)
+      //               .tz("Europe/Berlin")
+      //               .format("YYYY-MM-DD HH:mm:ss")
+      //           : null,
+      //     },
+
+      //     examInfo: std.examInfo.map((exm) => ({
+      //       ...exm.toJSON(),
+      //       exam_datetime: exm.exam_datetime
+      //         ? moment
+      //             .utc(exm.exam_datetime)
+      //             .tz("Europe/Berlin")
+      //             .format("YYYY-MM-DD HH:mm:ss")
+      //         : null,
+      //     })),
+      //     interviewInfo: std.interviewInfo.map((int) => ({
+      //       ...int.toJSON(),
+      //       int_datetime: int.int_datetime
+      //         ? moment
+      //             .utc(int.int_datetime)
+      //             .tz("Europe/Berlin")
+      //             .format("YYYY-MM-DD HH:mm:ss")
+      //         : null,
+      //     })),
+      //   })),
+      // };
       return {
         ...itm.toJSON(),
         password: decryptPassword,
@@ -170,55 +233,43 @@ export default router.get("/", authenticate, async (req, res) => {
           registered_on: std.registered_on
             ? moment
                 .utc(std.registered_on)
-                .tz("Europe/Berlin")
+                .tz("Asia/Kolkata")
                 .format("YYYY-MM-DD HH:mm:ss")
             : null,
           selected_on: std.selected_on
             ? moment
                 .utc(std.selected_on)
-                .tz("Europe/Berlin")
+                .tz("Asia/Kolkata")
                 .format("YYYY-MM-DD HH:mm:ss")
             : null,
           createdAt: std.createdAt
             ? moment
                 .utc(std.createdAt)
-                .tz("Europe/Berlin")
+                .tz("Asia/Kolkata")
                 .format("YYYY-MM-DD HH:mm:ss")
             : null,
           batchInfo: {
             ...std.batchInfo?.toJSON(),
             start_date:
               std.batchInfo?.start_date != null
-                ? moment
-                    .utc(std.batchInfo.start_date)
-                    .tz("Europe/Berlin")
-                    .format("YYYY-MM-DD HH:mm:ss")
+                ? moment(std.batchInfo.start_date).format("YYYY-MM-DD HH:mm:ss")
                 : null,
             end_date:
               std.batchInfo?.end_date != null
-                ? moment
-                    .utc(std.batchInfo.end_date)
-                    .tz("Europe/Berlin")
-                    .format("YYYY-MM-DD HH:mm:ss")
+                ? moment(std.batchInfo.end_date).format("YYYY-MM-DD HH:mm:ss")
                 : null,
           },
 
           examInfo: std.examInfo.map((exm) => ({
             ...exm.toJSON(),
             exam_datetime: exm.exam_datetime
-              ? moment
-                  .utc(exm.exam_datetime)
-                  .tz("Europe/Berlin")
-                  .format("YYYY-MM-DD HH:mm:ss")
+              ? moment(exm.exam_datetime).format("YYYY-MM-DD HH:mm:ss")
               : null,
           })),
           interviewInfo: std.interviewInfo.map((int) => ({
             ...int.toJSON(),
             int_datetime: int.int_datetime
-              ? moment
-                  .utc(int.int_datetime)
-                  .tz("Europe/Berlin")
-                  .format("YYYY-MM-DD HH:mm:ss")
+              ? moment(int.int_datetime).format("YYYY-MM-DD HH:mm:ss")
               : null,
           })),
         })),

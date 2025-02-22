@@ -106,7 +106,7 @@ export default router.post("/", authenticate, async (req, res) => {
       process.env.TOKEN_KEY
     ).toString();
 
-    await accountModel.create({
+   let admin= await accountModel.create({
       ...req.body,
       role: role,
       password: encryptedPassword,
@@ -136,7 +136,7 @@ Sri Sathya Sai Skill Development Program
 📞 9052372023`,
     };
 
-    resendMail(student, message);
+    resendMail(admin, message);
 
     return send(res, RESPONSE.SUCCESS);
   } catch (err) {

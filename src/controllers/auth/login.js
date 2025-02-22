@@ -71,6 +71,8 @@ export default router.post("/", async (req, res) => {
           role: accountData ? accountData.role : studentData.role,
           access_token: token,
         });
+      }else {
+        return send(res, setErrResMsg(RESPONSE.INVALID, "Login credential"));
       }
     } else {
       return send(res, setErrResMsg(RESPONSE.INVALID, "Login credential"));
