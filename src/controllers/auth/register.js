@@ -228,14 +228,20 @@ export default router.post("/", async (req, res) => {
         deletefile(`public/${imagedir}`, [resume, profile]);
         return send(
           res,
-          setErrResMsg(RESPONSE.ERR, "You are already registered with us. Please call us at the phone number on home page")
+          setErrResMsg(
+            RESPONSE.ERR,
+            "You are already registered with us. Please call us at the phone number on home page"
+          )
         );
       }
       if (isemailExist || isaccountEmail) {
         deletefile(`public/${imagedir}`, [resume, profile]);
         return send(
           res,
-          setErrResMsg(RESPONSE.ERR, "You are already registered with us. Please call us at the phone number on home page")
+          setErrResMsg(
+            RESPONSE.ERR,
+            "You are already registered with us. Please call us at the phone number on home page"
+          )
         );
       }
 
@@ -261,17 +267,17 @@ export default router.post("/", async (req, res) => {
         subject: `Confirmation of Interest in Data Engineer Course`,
 
         text: `Dear ${student.name},
-        We are pleased to acknowledge your registration for the Data Engineer Course offered by the Sri Sathya Sai Skill Development Program.
+We are pleased to acknowledge your registration for the Data Engineer Course offered by the Sri Sathya Sai Skill Development Program.
         
-        This comprehensive, in-person, three-month course is tailored for graduates or postgraduates with a keen interest in technology. The course is conducted by industry experts and is designed to equip participants with the necessary skills for a successful career in data engineering. Upon successful completion, participants will receive placement recommendations. This program is offered entirely free of charge as part of our commitment to nation-building.
+This comprehensive, in-person, three-month course is tailored for graduates or postgraduates with a keen interest in technology. The course is conducted by industry experts and is designed to equip participants with the necessary skills for a successful career in data engineering. Upon successful completion, participants will receive placement recommendations. This program is offered entirely free of charge as part of our commitment to nation-building.
         
-        As the next step, you will be invited to an examination and interview to confirm your enrollment. Please monitor your email and mobile phone for further communication regarding the details.
+As the next step, you will be invited to an examination and interview to confirm your enrollment. Please monitor your email and mobile phone for further communication regarding the details.
         
-        Please note that this is a system-generated email; do not reply to this message. Additionally, your application does not guarantee admission to the course.
+Please note that this is a system-generated email; do not reply to this message. Additionally, your application does not guarantee admission to the course.
         
-        We trust that you have provided the correct contact information to ensure seamless communication.
+We trust that you have provided the correct contact information to ensure seamless communication.
         
-        We wish you the very best in your endeavors.
+We wish you the very best in your endeavors.
         
 Best regards,
 Program Coordinator

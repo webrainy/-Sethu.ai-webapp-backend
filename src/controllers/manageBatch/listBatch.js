@@ -77,19 +77,27 @@ export default router.get("/", authenticate, async (req, res) => {
     batchData = batchData.map((itm) => {
       return {
         ...itm.toJSON(),
+        // start_date:
+        //   itm.start_date != null
+        //     ? moment
+        //         .utc(itm.start_date)
+        //         .tz("Europe/Berlin")
+        //         .format("YYYY-MM-DD HH:mm:ss")
+        //     : "",
+        // end_date:
+        //   itm.end_date != null
+        //     ? moment
+        //         .utc(itm.end_date)
+        //         .tz("Europe/Berlin")
+        //         .format("YYYY-MM-DD HH:mm:ss")
+        //     : "",
         start_date:
           itm.start_date != null
-            ? moment
-                .utc(itm.start_date)
-                .tz("Europe/Berlin")
-                .format("YYYY-MM-DD HH:mm:ss")
+            ? moment(itm.start_date).format("YYYY-MM-DD HH:mm:ss")
             : "",
         end_date:
           itm.end_date != null
-            ? moment
-                .utc(itm.end_date)
-                .tz("Europe/Berlin")
-                .format("YYYY-MM-DD HH:mm:ss")
+            ? moment(itm.end_date).format("YYYY-MM-DD HH:mm:ss")
             : "",
       };
     });

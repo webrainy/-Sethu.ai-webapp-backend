@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 5932;
 import path from "path";
 const __dirname = path.resolve();
 import router from "./routes.js";
-import { resendMail } from "./src/middlewares/resend.js";
 
 app.use(cors());
 app.use(express.json());
