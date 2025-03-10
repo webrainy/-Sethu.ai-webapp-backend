@@ -57,7 +57,7 @@ export default router.get("/", authenticate, async (req, res) => {
           include: [
             {
               model: studentModel,
-              as: "studentInfo",
+              as: "student",
               attributes: [
                 "student_id",
                 "name",

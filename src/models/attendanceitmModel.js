@@ -46,15 +46,15 @@ const initattendanceItm = async () => {
       targetKey: "student_id",
     });
 
-    student.hasMany(attendanceItm, {
-      as: "studentInfo",
-      onDelete: "cascade",
-      foreignKey: {
-        allowNull: false,
-        name: "student_id",
-      },
-      targetKey: "student_id",
-    });
+    // student.hasMany(attendanceItm, {
+    //   as: "studentInfo",
+    //   onDelete: "cascade",
+    //   foreignKey: {
+    //     allowNull: false,
+    //     name: "student_id",
+    //   },
+    //   targetKey: "student_id",
+    // });
 
     attendanceItm.belongsTo(attendance, {
       as: "attendanceInfo",

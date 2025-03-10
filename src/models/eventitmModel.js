@@ -30,7 +30,7 @@ const initEventItm = async () => {
     const event = await initeventModel();
 
     eventItm.belongsTo(student, {
-      as: "studentInfo",
+      as: "student",
       onDelete: "cascade",
       foreignKey: {
         allowNull: false,
@@ -50,7 +50,7 @@ const initEventItm = async () => {
     });
 
     eventItm.belongsTo(event, {
-      as: "eventInfo",
+      as: "event",
       onDelete: "cascade",
       foreignKey: {
         allowNull: false,

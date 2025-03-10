@@ -17,6 +17,7 @@ export default router.get("/", authenticate, async (req, res) => {
     //   return send(res, RESPONSE.ACCESS_DENIED);
     // }
     let student_id;
+
     if (req.user.role == ROLE.STUDENT) {
       student_id = req.user.id;
     } else {
@@ -41,7 +42,7 @@ export default router.get("/", authenticate, async (req, res) => {
 
     let order;
     req.query.order == 1
-      ? (order = [[{ model: eventModel, as: "eventInfo" }, "datetime", "ASC"]])
+      ? (order = [[{ model: eventModel, as: "event" }, "datetime", "ASC"]])
       : (order = [["createdAt", "DESC"]]);
 
     let studentInfo = await studentModel.findAll({
@@ -64,7 +65,7 @@ export default router.get("/", authenticate, async (req, res) => {
       include: [
         {
           model: eventModel,
-          as: "eventInfo",
+          as: "event",
           where: query,
           attributes: [
             "event_id",
@@ -92,13 +93,13 @@ export default router.get("/", authenticate, async (req, res) => {
     events = events.map((itm) => {
       return {
         ...itm.toJSON(),
-        eventInfo: {
-          ...itm.eventInfo.toJSON(),
+        event: {
+          ...itm.event.toJSON(),
           // datetime: moment
           //   .utc(itm.eventInfo.datetime)
           //   .tz("Europe/Berlin")
           //   .format("YYYY-MM-DD HH:mm:ss"),
-          datetime: moment(itm.eventInfo.datetime).format("YYYY-MM-DD HH:mm:ss"),
+          datetime: moment(itm.event.datetime).format("YYYY-MM-DD HH:mm:ss"),
         },
       };
     });
