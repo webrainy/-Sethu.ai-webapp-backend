@@ -72,6 +72,7 @@ export default router.get("/", authenticate, async (req, res) => {
                 "name",
                 "phone",
                 "email",
+                "rollno",
                 "current_state",
                 "batch_state",
                 "dnc_state",

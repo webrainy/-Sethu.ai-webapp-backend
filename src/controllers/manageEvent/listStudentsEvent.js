@@ -47,7 +47,7 @@ export default router.get("/", authenticate, async (req, res) => {
 
     let studentInfo = await studentModel.findAll({
       where: { isactive: STATE.ACTIVE, student_id: student_id },
-      attributes: ["student_id", "name"],
+      attributes: ["student_id", "name", "rollno"],
       include: [
         {
           model: batchModel,

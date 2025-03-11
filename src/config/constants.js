@@ -57,5 +57,15 @@ export const STATE = {
   ACTIVE: 1,
   INACTIVE: 0,
 };
+export const ATTENDANCE_TYPE = {
+  CLASS: 1,
+  LAB: 2,
+  MENTORSHIP: 3,
+};
+
+export const ATTENDANCE_STATUS = {
+  PRESENT: 1,
+  ABSENT: 0,
+};
 
 export const HASH_ROUND = 10;
