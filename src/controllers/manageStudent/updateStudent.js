@@ -280,6 +280,22 @@ for Sri Sathya Sai Skill Development Project
             // sendEmails(student, message);
             resendMail(student, message);
           }
+
+          if (student.rollno == null) {
+            let latest = await studentModel.findOne({
+              where: { isactive: STATE.ACTIVE },
+              order: [["sequence", "ASC"]],
+            });
+
+            let x = latest != null ? latest.sequence + 1 : 1;
+            let formattedSeq = x.toString().padStart(3, "0");
+
+            let rollno = `SSSSDP-D${formattedSeq}`;
+            let sequence = latest != null ? latest.sequence + 1 : 1;
+
+            (updates.rollno = rollno), (updates.sequence = sequence);
+          }
+
           student.selected_on == null ? (updates.selected_on = new Date()) : "";
           updates.batch_state = BATCH_STATE.ASSIGNED;
           updates.batch_id = batch_id;

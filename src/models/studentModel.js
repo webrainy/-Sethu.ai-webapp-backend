@@ -12,6 +12,15 @@ const studentInfo = {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
   },
+  //roll no fields
+  rollno: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  sequence: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   //personal info
   name: {
     type: DataTypes.STRING,
