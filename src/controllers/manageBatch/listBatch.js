@@ -85,43 +85,6 @@ export default router.get("/", authenticate, async (req, res) => {
     const attendanceModel = await initAttendanceModel();
     const attendanceItmModel = await initattendanceItm();
 
-    // let batchAttendanceCounts = await attendanceModel.findAll({
-    //   attributes: [
-    //     "attendance_type",
-    //     [Sequelize.fn("COUNT", Sequelize.col("attendance_type")), "count"],
-    //   ],
-    //   where: { isactive: STATE.ACTIVE, batch_id: req.query.batch_id },
-    //   group: ["attendance_type"],
-    // });
-
-    // let stdMentorshipCount = await attendanceModel.count({
-    //   include: [
-    //     {
-    //       model: attendanceItmModel,
-    //       as: "attendanceInfo",
-    //       where: {
-    //         isactive: STATE.ACTIVE,
-    //         attendance_status: ATTENDANCE_STATUS.PRESENT,
-    //       },
-
-    //       include: [
-    //         {
-    //           model: studentModel,
-    //           as: "studentInfo",
-    //           where: {
-    //             isactive: STATE.ACTIVE,
-    //             student_id: std.student_id,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   where: {
-    //     isactive: STATE.ACTIVE,
-    //     batch_id: req.query.batch_id,
-    //     attendance_type: ATTENDANCE_TYPE.MENTORSHIP,
-    //   },
-    // });
     let students;
     let attCount;
     let updatedBatchData = await Promise.all(
