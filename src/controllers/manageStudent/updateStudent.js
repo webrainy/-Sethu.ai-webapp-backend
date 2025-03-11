@@ -284,12 +284,11 @@ for Sri Sathya Sai Skill Development Project
           if (student.rollno == null) {
             let latest = await studentModel.findOne({
               where: { isactive: STATE.ACTIVE },
-              order: [["sequence", "DESC"]],
+              order: [["sequence", "ASC"]],
             });
 
             let x = latest != null ? latest.sequence + 1 : 1;
             let formattedSeq = x.toString().padStart(3, "0");
-            console.log(formattedSeq);
 
             let rollno = `SSSSDP-D${formattedSeq}`;
             let sequence = latest != null ? latest.sequence + 1 : 1;

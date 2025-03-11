@@ -74,103 +74,177 @@ export default router.post("/", async (req, res) => {
       let accountModel = await initaccountmodel();
 
       if (name == "" || name == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "name"));
       }
       if (phone == "" || phone == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "phone"));
       }
       if (email == "" || email == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "email"));
       }
       if (password == "" || password == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "password"));
       }
       if (location == "" || location == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "location"));
       }
       if (education == "" || education == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "education"));
       }
       if (cgpa == "" || cgpa == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "cgpa"));
       }
       if (year_passed == "" || year_passed == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "year_passed"));
       }
       if (gmat == "" || gmat == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "gmat"));
       }
       if (course_prep == "" || course_prep == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "course_prep"));
       }
       if (curnt_work == "" || curnt_work == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "curnt_work"));
       }
       if (commit_ft == "" || commit_ft == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "commit_ft"));
       }
       if (sk_python == "" || sk_python == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_python"));
       }
       if (sk_sql == "" || sk_sql == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_sql"));
       }
       if (sk_java == "" || sk_java == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_java"));
       }
       if (sk_analyticalskill == "" || sk_analyticalskill == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_analyticalskill"));
       }
       if (sk_prblmsolving == "" || sk_prblmsolving == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_prblmsolving"));
       }
       if (sk_engprof == "" || sk_engprof == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_engprof"));
       }
       if (hckr_rnk == "" || hckr_rnk == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "hckr_rnk"));
       }
       if (hobbies == "" || hobbies == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "hobbies"));
       }
       if (linkedin_url == "" || linkedin_url == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "linkedin_url"));
       }
       if (github_url == "" || github_url == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "github_url"));
       }
       if (father_occ == "" || father_occ == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "father_occ"));
       }
       if (mother_occ == "" || mother_occ == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "mother_occ"));
       }
       if (income == "" || income == undefined) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "income"));
       }
 
@@ -179,13 +253,19 @@ export default router.post("/", async (req, res) => {
       );
 
       if (!emailPattern) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.INVALID, "Email"));
       }
 
       const pPattern = String(phone).match(/^\+\d{10,15}$/);
       if (!pPattern) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.INVALID, "Phone"));
       }
 
@@ -193,7 +273,10 @@ export default router.post("/", async (req, res) => {
         /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/
       );
       if (!pwdPattern) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(res, setErrResMsg(RESPONSE.INVALID, "password pattern"));
       }
 
@@ -225,7 +308,10 @@ export default router.post("/", async (req, res) => {
       });
 
       if (isphoneExist || isaccountPhone) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(
           res,
           setErrResMsg(
@@ -235,7 +321,10 @@ export default router.post("/", async (req, res) => {
         );
       }
       if (isemailExist || isaccountEmail) {
-        deletefile(`public/${imagedir}`, [resume, profile]);
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
         return send(
           res,
           setErrResMsg(
