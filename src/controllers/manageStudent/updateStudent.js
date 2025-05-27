@@ -288,7 +288,7 @@ for Sri Sathya Sai Skill Development Project
             });
 
             let x = latest != null ? latest.sequence + 1 : 1;
-            let formattedSeq = x.toString().padStart(3, "0");
+            let formattedSeq = x.toString().padStart(2, "0");
 
             let rollno = `SSSSDP-D${formattedSeq}`;
             let sequence = latest != null ? latest.sequence + 1 : 1;
