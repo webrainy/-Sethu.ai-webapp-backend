@@ -38,9 +38,29 @@ const studentInfo = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  dob: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  college: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   location: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  district: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 
   //education info
@@ -119,11 +139,11 @@ const studentInfo = {
   },
   github_url: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   resume: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   // coverletter: {
   //   type: DataTypes.STRING,

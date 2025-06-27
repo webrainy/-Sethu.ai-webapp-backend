@@ -28,7 +28,12 @@ export default router.get("/", authenticate, async (req, res) => {
       "phone",
       "email",
       "rollno",
+      "dob",
+      "gender",
+      "college",
       "location",
+      "city",
+      "district",
       "education",
       "cgpa",
       "year_passed",
@@ -229,7 +234,7 @@ export default router.get("/", authenticate, async (req, res) => {
         password: decryptPassword,
         studentInfo: itm?.studentInfo?.map((std) => ({
           ...std.toJSON(),
-          resume: "/document/" + std.resume,
+          resume: std.resume ? "/document/" + std.resume : null,
           profile: std.profile ? "/document/" + std.profile : null,
           registered_on: std.registered_on
             ? moment

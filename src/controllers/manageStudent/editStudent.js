@@ -44,7 +44,12 @@ export default router.put("/", authenticate, async (req, res) => {
         phone,
         email,
         // password,
+        dob,
+        gender,
+        college,
         location,
+        city,
+        district,
         education,
         cgpa,
         year_passed,
@@ -144,6 +149,21 @@ export default router.put("/", authenticate, async (req, res) => {
       // }
       if (location && location != undefined) {
         updates.location = location;
+      }
+      if (dob && dob != undefined) {
+        updates.dob = dob;
+      }
+      if (city && city != undefined) {
+        updates.city = city;
+      }
+      if (district && district != undefined) {
+        updates.district = district;
+      }
+      if (gender && gender != undefined) {
+        updates.gender = gender;
+      }
+      if (college && college != undefined) {
+        updates.college = college;
       }
       if (education && education != undefined) {
         updates.education = education;

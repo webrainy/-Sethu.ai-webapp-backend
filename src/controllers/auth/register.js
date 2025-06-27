@@ -27,26 +27,31 @@ const router = Router();
 export default router.post("/", async (req, res) => {
   try {
     uploads(req, res, async (err) => {
-      if (req.files != undefined) {
-        if (err) {
-          return send(res, setErrResMsg(RESPONSE.MULTER_ERROR, err.message));
-        }
-        if (!req.files.resume || !req.files.resume == undefined) {
-          return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
-        }
-        // if (!req.files.profile || req.files.profile == undefined) {
-        //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Cover letter"));
-        // }
-      } else {
-        return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
+      // if (req.files != undefined) {
+      if (err) {
+        return send(res, setErrResMsg(RESPONSE.MULTER_ERROR, err.message));
       }
+      // if (!req.files.resume || !req.files.resume == undefined) {
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
+      // }
+      // if (!req.files.profile || req.files.profile == undefined) {
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Cover letter"));
+      // }
+      // } else {
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
+      // }
 
       const {
         name,
         phone,
         email,
         password,
+        dob,
+        gender,
+        college,
         location,
+        city,
+        district,
         education,
         cgpa,
         year_passed,
@@ -68,7 +73,8 @@ export default router.post("/", async (req, res) => {
         mother_occ,
         income,
       } = req.body;
-      let resume = req.files.resume[0].filename;
+      // let resume = req.files.resume[0].filename;
+      let resume = req.files.resume ? req.files.resume[0].filename : null;
       let profile = req.files.profile ? req.files.profile[0].filename : null;
       let studentModel = await initstudentmodel();
       let accountModel = await initaccountmodel();
@@ -100,13 +106,48 @@ export default router.post("/", async (req, res) => {
 
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "password"));
       }
-      if (location == "" || location == undefined) {
+      if (dob == "" || dob == undefined) {
         req.files.profile
           ? deletefile(`public/${imagedir}`, [resume, profile])
           : "";
 
-        return send(res, setErrResMsg(RESPONSE.REQUIRED, "location"));
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "dob"));
       }
+      if (gender == "" || gender == undefined) {
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "gender"));
+      }
+      if (college == "" || college == undefined) {
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "college"));
+      }
+      // if (location == "" || location == undefined) {
+      //   req.files.profile
+      //     ? deletefile(`public/${imagedir}`, [resume, profile])
+      //     : "";
+
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "location"));
+      // }
+      if (city == "" || city == undefined) {
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "city"));
+      }
+
+      if (district == "" || district == undefined) {
+        req.files.profile
+          ? deletefile(`public/${imagedir}`, [resume, profile])
+          : "";
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "district"));
+      }
+
       if (education == "" || education == undefined) {
         req.files.profile
           ? deletefile(`public/${imagedir}`, [resume, profile])
@@ -219,13 +260,13 @@ export default router.post("/", async (req, res) => {
 
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "linkedin_url"));
       }
-      if (github_url == "" || github_url == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
+      // if (github_url == "" || github_url == undefined) {
+      //   req.files.profile
+      //     ? deletefile(`public/${imagedir}`, [resume, profile])
+      //     : "";
 
-        return send(res, setErrResMsg(RESPONSE.REQUIRED, "github_url"));
-      }
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "github_url"));
+      // }
       if (father_occ == "" || father_occ == undefined) {
         req.files.profile
           ? deletefile(`public/${imagedir}`, [resume, profile])

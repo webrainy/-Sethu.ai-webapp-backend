@@ -18,6 +18,7 @@ import initinterviewModel from "../../models/interviewModel.js";
 import moment from "moment";
 import initaccountModel from "../../models/accountModel.js";
 import path from "path";
+import { Op } from "sequelize";
 const __dirname = path.resolve();
 const router = Router();
 
@@ -283,8 +284,8 @@ for Sri Sathya Sai Skill Development Project
 
           if (student.rollno == null) {
             let latest = await studentModel.findOne({
-              where: { isactive: STATE.ACTIVE },
-              order: [["sequence", "ASC"]],
+              where: { isactive: STATE.ACTIVE, sequence: { [Op.ne]: null } },
+              order: [["sequence", "DESC"]],
             });
 
             let x = latest != null ? latest.sequence + 1 : 1;

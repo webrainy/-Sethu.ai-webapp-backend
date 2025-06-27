@@ -20,6 +20,9 @@ export const CURRENT_STATE = {
   FOLLOW_UP: 3,
   REJECTED: 4,
   UNABLE_TO_DECIDE: 5,
+  EXAM_SCHEDULED: 6,
+  EXAM_PASSED: 7,
+  ASSIGNED: 8,
 };
 
 export const COMPLITION_STATUS = {
@@ -57,6 +60,7 @@ export const STATE = {
   ACTIVE: 1,
   INACTIVE: 0,
 };
+
 export const ATTENDANCE_TYPE = {
   CLASS: 1,
   LAB: 2,
@@ -66,6 +70,11 @@ export const ATTENDANCE_TYPE = {
 export const ATTENDANCE_STATUS = {
   PRESENT: 1,
   ABSENT: 0,
+};
+
+export const ASSIGNED_STATUS = {
+  ASSIGNED: 2,
+  UNASSIGNED: 1,
 };
 
 export const HASH_ROUND = 10;
