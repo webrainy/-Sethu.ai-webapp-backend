@@ -17,9 +17,9 @@ const router = Router();
 
 export default router.put("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.STUDENT) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.STUDENT) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     uploads(req, res, async (err) => {
       let updates = {};
@@ -38,7 +38,17 @@ export default router.put("/", authenticate, async (req, res) => {
         }
       }
 
-      const student_id = req.user.id;
+      let student_id;
+      if (req.user.role != ROLE.STUDENT) {
+        if (!req.query.student_id || req.query.student_id == undefined) {
+          return send(res, setErrResMsg(RESPONSE.REQUIRED, "student_id"));
+        }
+
+        student_id = req.query.student_id;
+      } else {
+        student_id = req.user.id;
+      }
+
       const {
         name,
         phone,
