@@ -2,7 +2,13 @@ import { Router } from "express";
 import authenticate from "../../middlewares/authenticate.js";
 import { send, setErrResMsg } from "../../helper/responseHelper.js";
 import { RESPONSE } from "../../config/global.js";
-import { ROLE, STATE } from "../../config/constants.js";
+import {
+  BATCH_STATE,
+  CURRENT_STATE,
+  RESULT,
+  ROLE,
+  STATE,
+} from "../../config/constants.js";
 import initaccountModel from "../../models/accountModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initexamModel from "../../models/examModel.js";
@@ -77,6 +83,10 @@ export default router.get("/", authenticate, async (req, res) => {
       role: ROLE.REVIEWER,
     };
 
+    let examQuery = {
+      isactive: STATE.ACTIVE,
+    };
+
     if (req.user.role == ROLE.REVIEWER) {
       query.account_id = req.user.id;
       studentAttribute = stAttribute;
@@ -93,6 +103,31 @@ export default router.get("/", authenticate, async (req, res) => {
       ];
       examAttribute = ["exam_id", "exam_datetime", "exam_result", "exam_marks"];
       interviewAttribute = ["interview_id", "int_datetime", "int_result"];
+
+      if (req.query.batch_state) {
+        if (req.query.batch_state == BATCH_STATE.ASSIGNED) {
+          req.query.batch_id
+            ? (studentQuery.batch_id = req.query.batch_id)
+            : (studentQuery.batch_id = { [Op.ne]: null });
+        } else if (req.query.batch_state == BATCH_STATE.NOT_ASSIGNED) {
+          studentQuery.batch_id = { [Op.eq]: null };
+        }
+      }
+
+      if (req.query.current_state) {
+        if (req.query.current_state == CURRENT_STATE.ASSIGNED) {
+          studentQuery.batch_id = { [Op.ne]: null };
+        } else if (req.query.current_state == CURRENT_STATE.EXAM_SCHEDULED) {
+          examQuery.exam_datetime = { [Op.ne]: null };
+          examQuery.exam_result = RESULT.PENDING;
+        } else if (req.query.current_state == CURRENT_STATE.EXAM_PASSED) {
+          examQuery.exam_result = RESULT.PASS;
+        } else {
+          req.query.current_state
+            ? (studentQuery.current_state = req.query.current_state)
+            : "";
+        }
+      }
     } else if (req.query.account_id) {
       query.account_id = req.query.account_id;
       studentAttribute = stAttribute;
@@ -146,7 +181,8 @@ export default router.get("/", authenticate, async (req, res) => {
               model: examModel,
               as: "examInfo",
               attributes: examAttribute,
-              required: false,
+              required: true,
+              where: examQuery,
             },
             {
               model: interviewModel,

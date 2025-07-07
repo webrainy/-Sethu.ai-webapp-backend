@@ -31,9 +31,9 @@ export default router.get("/", authenticate, async (req, res) => {
     let reviewerQuery = {
       isactive: STATE.ACTIVE,
     };
-    let examQuery = {
-      isactive: STATE.ACTIVE,
-    };
+    // let examQuery = {
+    //   isactive: STATE.ACTIVE,
+    // };
 
     if (req.user.role == ROLE.STUDENT) {
       query.student_id = req.user.id;
@@ -89,14 +89,26 @@ export default router.get("/", authenticate, async (req, res) => {
         query.account_id = { [Op.eq]: null };
       }
     }
+    let includeExam = {
+      model: examModel,
+      as: "examInfo",
+      attributes: ["exam_id", "exam_datetime", "exam_result", "exam_marks"],
+      required: false, // default, overridden if needed
+      where: { isactive: STATE.ACTIVE },
+    };
 
     if (req.query.current_state) {
       if (req.query.current_state == CURRENT_STATE.ASSIGNED) {
         query.batch_id = { [Op.ne]: null };
       } else if (req.query.current_state == CURRENT_STATE.EXAM_SCHEDULED) {
-        examQuery.exam_datetime = { [Op.ne]: null };
+        includeExam.required = true;
+        includeExam.where = {
+          exam_datetime: { [Op.ne]: null },
+          exam_result: RESULT.PENDING,
+        };
       } else if (req.query.current_state == CURRENT_STATE.EXAM_PASSED) {
-        examQuery.exam_result = RESULT.PASS;
+        includeExam.required = true;
+        includeExam.where = { exam_result: RESULT.PASS };
       } else {
         req.query.current_state
           ? (query.current_state = req.query.current_state)
@@ -123,13 +135,8 @@ export default router.get("/", authenticate, async (req, res) => {
           ],
           required: false,
         },
-        {
-          model: examModel,
-          as: "examInfo",
-          where: examQuery,
-          attributes: ["exam_id", "exam_datetime", "exam_result", "exam_marks"],
-          required: false,
-        },
+
+        includeExam,
         {
           model: interviewModel,
           as: "interviewInfo",

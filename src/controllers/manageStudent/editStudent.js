@@ -178,7 +178,7 @@ export default router.put("/", authenticate, async (req, res) => {
       if (education && education != undefined) {
         updates.education = education;
       }
-      if (cgpa && cgpa == "") {
+      if (cgpa && cgpa != undefined) {
         updates.cgpa = cgpa;
       }
       if (year_passed && year_passed != undefined) {
