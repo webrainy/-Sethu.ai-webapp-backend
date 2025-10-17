@@ -41,6 +41,8 @@ export default router.put("/", authenticate, async (req, res) => {
       exam_marks,
       int_datetime,
       int_result,
+      int_comment,
+      interviewer_id,
     } = req.body;
 
     let studentModel = await initstudentModel();
@@ -138,10 +140,18 @@ Sri Sathya Sai Skill Development Program
           student_id,
         },
       });
+      let interviewUpdates = {};
+      if (int_comment && int_comment != undefined) {
+        interviewUpdates.int_comment = int_comment;
+      }
+      if (interviewer_id && interviewer_id != undefined) {
+        interviewUpdates.interviewer_id = interviewer_id;
+      }
 
       if (interview) {
         await interviewModel.update(
           {
+            ...interviewUpdates,
             int_datetime,
             int_result: int_result ? int_result : RESULT.PENDING,
           },
@@ -151,6 +161,7 @@ Sri Sathya Sai Skill Development Program
         );
       } else {
         await interviewModel.create({
+          ...interviewUpdates,
           int_datetime,
           int_result: int_result ? int_result : RESULT.PENDING,
           student_id,

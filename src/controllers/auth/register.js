@@ -72,6 +72,11 @@ export default router.post("/", async (req, res) => {
         father_occ,
         mother_occ,
         income,
+        iq_level,
+        attitude,
+        aspiration,
+        has_laptop,
+        got_to_know_from,
       } = req.body;
       // let resume = req.files.resume[0].filename;
       let resume = req.files.resume ? req.files.resume[0].filename : null;
@@ -253,13 +258,13 @@ export default router.post("/", async (req, res) => {
 
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "hobbies"));
       }
-      if (linkedin_url == "" || linkedin_url == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
+      // if (linkedin_url == "" || linkedin_url == undefined) {
+      //   req.files.profile
+      //     ? deletefile(`public/${imagedir}`, [resume, profile])
+      //     : "";
 
-        return send(res, setErrResMsg(RESPONSE.REQUIRED, "linkedin_url"));
-      }
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "linkedin_url"));
+      // }
       // if (github_url == "" || github_url == undefined) {
       //   req.files.profile
       //     ? deletefile(`public/${imagedir}`, [resume, profile])

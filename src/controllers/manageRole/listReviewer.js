@@ -68,6 +68,11 @@ export default router.get("/", authenticate, async (req, res) => {
       "dnc_state",
       "registered_on",
       "selected_on",
+      "iq_level",
+      "attitude",
+      "aspiration",
+      "has_laptop",
+      "got_to_know_from",
       "createdAt",
     ];
     let batchAttribute = [];
@@ -102,7 +107,12 @@ export default router.get("/", authenticate, async (req, res) => {
         "actual_hour",
       ];
       examAttribute = ["exam_id", "exam_datetime", "exam_result", "exam_marks"];
-      interviewAttribute = ["interview_id", "int_datetime", "int_result"];
+      interviewAttribute = [
+        "interview_id",
+        "int_datetime",
+        "int_result",
+        "int_comment",
+      ];
 
       if (req.query.batch_state) {
         if (req.query.batch_state == BATCH_STATE.ASSIGNED) {
@@ -143,7 +153,12 @@ export default router.get("/", authenticate, async (req, res) => {
         "actual_hour",
       ];
       examAttribute = ["exam_id", "exam_datetime", "exam_result", "exam_marks"];
-      interviewAttribute = ["interview_id", "int_datetime", "int_result"];
+      interviewAttribute = [
+        "interview_id",
+        "int_datetime",
+        "int_result",
+        "int_comment",
+      ];
     }
 
     let reviewerData = await accountModel.findAll({
@@ -181,7 +196,7 @@ export default router.get("/", authenticate, async (req, res) => {
               model: examModel,
               as: "examInfo",
               attributes: examAttribute,
-              required: true,
+              required: false,
               where: examQuery,
             },
             {
@@ -189,6 +204,14 @@ export default router.get("/", authenticate, async (req, res) => {
               as: "interviewInfo",
               attributes: interviewAttribute,
               required: false,
+              include: [
+                {
+                  model: accountModel,
+                  as: "interviewer",
+                  attributes: ["account_id", "name", "phone", "email"],
+                  required: false,
+                },
+              ],
             },
           ],
         },

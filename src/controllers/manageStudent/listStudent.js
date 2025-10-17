@@ -140,8 +140,21 @@ export default router.get("/", authenticate, async (req, res) => {
         {
           model: interviewModel,
           as: "interviewInfo",
-          attributes: ["interview_id", "int_datetime", "int_result"],
+          attributes: [
+            "interview_id",
+            "int_datetime",
+            "int_result",
+            "int_comment",
+          ],
           required: false,
+          include: [
+            {
+              model: accountModel,
+              as: "interviewer",
+              attributes: ["account_id", "name", "phone", "email"],
+              required: false,
+            },
+          ],
         },
         {
           model: accountModel,
@@ -200,6 +213,11 @@ export default router.get("/", authenticate, async (req, res) => {
         "dnc_state",
         "registered_on",
         "selected_on",
+        "iq_level",
+        "attitude",
+        "aspiration",
+        "has_laptop",
+        "got_to_know_from",
         "createdAt",
       ],
       order: [["createdAt", "DESC"]],

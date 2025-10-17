@@ -135,9 +135,21 @@ const studentInfo = {
   },
   linkedin_url: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   github_url: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  iq_level: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  attitude: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  aspiration: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -183,6 +195,14 @@ const studentInfo = {
     //Do not call again status
     type: DataTypes.INTEGER,
     default: DNC_STATE.CALL,
+  },
+  has_laptop: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  got_to_know_from: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   role: {
     type: DataTypes.INTEGER,

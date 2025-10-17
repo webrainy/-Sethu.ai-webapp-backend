@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
 import initstudentmodel from "./studentModel.js";
+import initaccountModel from "./accountModel.js";
 
 const interviewModel = {
   interview_id: {
@@ -15,6 +16,10 @@ const interviewModel = {
   int_result: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  int_comment: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   isactive: {
     type: DataTypes.INTEGER,
@@ -40,6 +45,17 @@ const initinterviewModel = async () => {
         name: "student_id",
       },
       targetKey: "student_id",
+    });
+
+    const interviewer = await initaccountModel();
+    interview.belongsTo(interviewer, {
+      as: "interviewer",
+      onDelete: "cascade",
+      foreignKey: {
+        allowNull: true,
+        name: "interviewer_id",
+      },
+      targetKey: "account_id",
     });
 
     await interview.sync({ alter: true });

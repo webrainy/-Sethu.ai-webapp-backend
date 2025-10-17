@@ -80,6 +80,11 @@ export default router.put("/", authenticate, async (req, res) => {
         father_occ,
         mother_occ,
         income,
+        iq_level,
+        attitude,
+        aspiration,
+        has_laptop,
+        got_to_know_from,
       } = req.body;
 
       let studentModel = await initstudentModel();
@@ -237,7 +242,22 @@ export default router.put("/", authenticate, async (req, res) => {
       if (income && income != undefined) {
         updates.income = income;
       }
-
+      if (iq_level && iq_level != undefined) {
+        updates.iq_level = iq_level;
+      }
+      if (attitude && attitude != undefined) {
+        updates.attitude = attitude;
+      }
+      if (aspiration && aspiration != undefined) {
+        updates.aspiration = aspiration;
+      }
+      if (has_laptop && has_laptop != undefined) {
+        updates.has_laptop = has_laptop;
+      }
+      if (got_to_know_from && got_to_know_from != undefined) {
+        updates.got_to_know_from = got_to_know_from;
+      }
+      
       await studentModel.update(updates, {
         where: { student_id: student_id },
       });
