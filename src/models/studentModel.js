@@ -220,7 +220,7 @@ const studentInfo = {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
-  isfrefered:{
+  isrefered:{
     type:DataTypes.INTEGER,
     defaultValue:2,
   },

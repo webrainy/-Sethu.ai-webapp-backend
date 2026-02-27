@@ -77,6 +77,8 @@ export default router.post("/", async (req, res) => {
         aspiration,
         has_laptop,
         got_to_know_from,
+        isrefered,
+        referedby,
       } = req.body;
       // let resume = req.files.resume[0].filename;
       let resume = req.files.resume ? req.files.resume[0].filename : null;
@@ -293,9 +295,12 @@ export default router.post("/", async (req, res) => {
 
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "income"));
       }
+      if(isrefered){
+        return send(res,setErrResMsg(RESPONSE.REQUIRED,"Refered By"))
+      }
 
       const emailPattern = String(email).match(
-        /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+        /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
       );
 
       if (!emailPattern) {
@@ -316,7 +321,7 @@ export default router.post("/", async (req, res) => {
       }
 
       const pwdPattern = String(password).match(
-        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/
+        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/,
       );
       if (!pwdPattern) {
         req.files.profile
@@ -362,8 +367,8 @@ export default router.post("/", async (req, res) => {
           res,
           setErrResMsg(
             RESPONSE.ERR,
-            "You are already registered with us. Please call us at the phone number on home page"
-          )
+            "You are already registered with us. Please call us at the phone number on home page",
+          ),
         );
       }
       if (isemailExist || isaccountEmail) {
@@ -375,8 +380,8 @@ export default router.post("/", async (req, res) => {
           res,
           setErrResMsg(
             RESPONSE.ERR,
-            "You are already registered with us. Please call us at the phone number on home page"
-          )
+            "You are already registered with us. Please call us at the phone number on home page",
+          ),
         );
       }
 
