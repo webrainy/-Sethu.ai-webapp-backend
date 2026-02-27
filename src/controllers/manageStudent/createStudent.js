@@ -80,6 +80,8 @@ export default router.post("/", authenticate, async (req, res) => {
         father_occ,
         mother_occ,
         income,
+        isfrefered,
+        referedby,
       } = req.body;
       // let resume = req.files.resume[0].filename;
 
@@ -216,9 +218,14 @@ export default router.post("/", authenticate, async (req, res) => {
         deletefile(`public/${imagedir}`, filePath);
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "income"));
       }
+      if (isfrefered) {
+        if (referedby == "" || referedby == undefined) {
+          return send(res, setErrResMsg(RESPONSE.REQUIRED, "ReferedBy"));
+        }
+      }
 
       const emailPattern = String(email).match(
-        /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+        /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
       );
 
       if (!emailPattern) {
@@ -233,7 +240,7 @@ export default router.post("/", authenticate, async (req, res) => {
       }
 
       const pwdPattern = String(password).match(
-        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/
+        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/,
       );
       if (!pwdPattern) {
         deletefile(`public/${imagedir}`, filePath);
@@ -272,7 +279,7 @@ export default router.post("/", authenticate, async (req, res) => {
         deletefile(`public/${imagedir}`, filePath);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone")
+          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone"),
         );
       }
 
@@ -280,14 +287,14 @@ export default router.post("/", authenticate, async (req, res) => {
         deletefile(`public/${imagedir}`, filePath);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email")
+          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email"),
         );
       }
 
       // const encryptedPassword = await bcrypt.hash(password, HASH_ROUND);
       const encryptedPassword = CryptoJS.AES.encrypt(
         password,
-        process.env.SECRET_KEY
+        process.env.SECRET_KEY,
       ).toString();
 
       let student = await studentModel.create({

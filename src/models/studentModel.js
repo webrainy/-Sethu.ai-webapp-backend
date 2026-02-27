@@ -220,6 +220,14 @@ const studentInfo = {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
+  isfrefered:{
+    type:DataTypes.INTEGER,
+    defaultValue:2,
+  },
+  referedby:{
+    type:DataTypes.STRING,
+    allowNull:true,
+  }
 };
 
 let student = null;
