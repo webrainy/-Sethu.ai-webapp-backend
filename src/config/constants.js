@@ -61,10 +61,16 @@ export const STATE = {
   INACTIVE: 0,
 };
 
-export const IS_REFERED={
-  YES:1,
-  NO:2,
-}
+export const IS_REFERED = {
+  YES: 1,
+  NO: 2,
+};
+
+export const COURSE_SOURCE = {
+  TASK: 1,
+  STUDENT_TRIBE: 2,
+  Referral: 3,
+};
 
 export const ATTENDANCE_TYPE = {
   CLASS: 1,

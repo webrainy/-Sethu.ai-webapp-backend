@@ -5,6 +5,8 @@ import initinterviewModel from "./interviewModel.js";
 import initexamModel from "./examModel.js";
 import initaccountModel from "./accountModel.js";
 import { BATCH_STATE, CURRENT_STATE, DNC_STATE } from "../config/constants.js";
+import { type } from "os";
+import { timeStamp } from "console";
 
 const studentInfo = {
   student_id: {
@@ -220,14 +222,18 @@ const studentInfo = {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
-  isrefered:{
-    type:DataTypes.INTEGER,
-    defaultValue:2,
+  isrefered: {
+    type: DataTypes.INTEGER,
+    defaultValue: 2,
   },
-  referedby:{
-    type:DataTypes.STRING,
-    allowNull:true,
-  }
+  referedby: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  course_source: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 };
 
 let student = null;
@@ -237,6 +243,7 @@ const initstudentmodel = async () => {
     const sequelize = await getConnection();
     student = sequelize.define("studentmodel", studentInfo, {
       freezeTableName: true,
+      timeStamp: true,
     });
 
     const batch = await initbatchModel();

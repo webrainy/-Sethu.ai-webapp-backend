@@ -26,6 +26,10 @@ const eventModel = {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  event_descriprion: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   isactive: {
     type: DataTypes.INTEGER,
     defaultValue: 1,

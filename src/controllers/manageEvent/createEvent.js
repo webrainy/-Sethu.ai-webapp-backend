@@ -13,7 +13,7 @@ import initeventModel from "../../models/eventModel.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initAssignmentItm from "../../models/eventitmModel.js";
 import initstudentmodel from "../../models/studentModel.js";
-import moment from "moment"
+import moment from "moment";
 import { resendMail } from "../../middlewares/resend.js";
 const router = Router();
 
@@ -26,7 +26,7 @@ export default router.post("/", authenticate, async (req, res) => {
     let {
       //   exstng_assign,
       title,
-
+      event_descriprion,
       url,
       datetime,
       event_type,
@@ -70,9 +70,11 @@ export default router.post("/", authenticate, async (req, res) => {
     let event = await eventModel.create({
       title,
       url,
+      event_descriprion,
       datetime,
       event_type,
       batch_id: batch_id,
+      student_id: student_id,
       account_id: req.user.id,
     });
 
@@ -90,7 +92,7 @@ export default router.post("/", authenticate, async (req, res) => {
 
       let message = {
         subject: `Meeting Link for Sri Sathya Sai Skill Development Program on ${moment(
-          datetime
+          datetime,
         ).format("LL")}`,
 
         text: `Dear ${student.name},

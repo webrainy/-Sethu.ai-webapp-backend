@@ -79,6 +79,7 @@ export default router.post("/", async (req, res) => {
         got_to_know_from,
         isrefered,
         referedby,
+        course_source,
       } = req.body;
       // let resume = req.files.resume[0].filename;
       let resume = req.files.resume ? req.files.resume[0].filename : null;
@@ -295,8 +296,13 @@ export default router.post("/", async (req, res) => {
 
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "income"));
       }
-      if(isrefered){
-        return send(res,setErrResMsg(RESPONSE.REQUIRED,"Refered By"))
+      if (isrefered == 1) {
+        if (!referedby) {
+          req.files.profile
+            ? deletefile(`public/${imagedir}`, [resume, profile])
+            : "";
+          return send(res, setErrResMsg(RESPONSE.REQUIRED, "Refered By"));
+        }
       }
 
       const emailPattern = String(email).match(
@@ -389,7 +395,7 @@ export default router.post("/", async (req, res) => {
 
       const encryptedPassword = CryptoJS.AES.encrypt(
         password,
-        process.env.TOKEN_KEY
+        process.env.TOKEN_KEY,
       ).toString();
 
       let student = await studentModel.create({
