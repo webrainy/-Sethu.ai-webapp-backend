@@ -5,6 +5,8 @@ import initinterviewModel from "./interviewModel.js";
 import initexamModel from "./examModel.js";
 import initaccountModel from "./accountModel.js";
 import { BATCH_STATE, CURRENT_STATE, DNC_STATE } from "../config/constants.js";
+import { type } from "os";
+import { timeStamp } from "console";
 
 const studentInfo = {
   student_id: {
@@ -38,9 +40,29 @@ const studentInfo = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  dob: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  college: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   location: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  district: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 
   //education info
@@ -115,15 +137,27 @@ const studentInfo = {
   },
   linkedin_url: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   github_url: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  iq_level: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  attitude: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  aspiration: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   resume: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   // coverletter: {
   //   type: DataTypes.STRING,
@@ -162,7 +196,15 @@ const studentInfo = {
   dnc_state: {
     //Do not call again status
     type: DataTypes.INTEGER,
-    default: DNC_STATE.CALL,
+    defaultValue: DNC_STATE.CALL,
+  },
+  has_laptop: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  got_to_know_from: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   role: {
     type: DataTypes.INTEGER,
@@ -180,6 +222,18 @@ const studentInfo = {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
+  isrefered: {
+    type: DataTypes.INTEGER,
+    defaultValue: 2,
+  },
+  referedby: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  course_source: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 };
 
 let student = null;
@@ -189,9 +243,11 @@ const initstudentmodel = async () => {
     const sequelize = await getConnection();
     student = sequelize.define("studentmodel", studentInfo, {
       freezeTableName: true,
+      timestamps: true,
     });
 
     const batch = await initbatchModel();
+    if (!batch) throw new Error("Batch model not initialized");
     student.belongsTo(batch, {
       as: "batchInfo",
       onDelete: "cascade",

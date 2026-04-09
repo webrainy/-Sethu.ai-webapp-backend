@@ -9,15 +9,14 @@ import initEventItm from "../../models/eventitmModel.js";
 import initstudentmodel from "../../models/studentModel.js";
 import moment from "moment";
 import initaccountModel from "../../models/accountModel.js";
+import { Op, literal } from "sequelize"; // ← added
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
-    // if (req.user.role != ROLE.ADMIN) {
-    //   return send(res, RESPONSE.ACCESS_DENIED);
-    // }
-
     const event_type = req.query.event_type;
+    const batch_id = req.query.batch_id;
+
     let order;
     req.query.order == 1
       ? (order = [["datetime", "ASC"]])
@@ -27,12 +26,15 @@ export default router.get("/", authenticate, async (req, res) => {
     req.query.limit ? (limit = req.query.limit) : "";
 
     let query = { isactive: STATE.ACTIVE };
+    if (event_type) query.event_type = event_type;
 
-    event_type ? (query.event_type = event_type) : "";
+    // Use literal() to bypass Sequelize field name mapping issues with UUID
+    if (batch_id) {
+      query[Op.and] = literal(`"event"."batch_id" = '${batch_id}'`);
+    }
 
     const eventModel = await initEventModel();
     const eventItmModel = await initEventItm();
-
     const batchModel = await initbatchModel();
     const studentModel = await initstudentmodel();
     const accountModel = await initaccountModel();
@@ -93,6 +95,11 @@ export default router.get("/", authenticate, async (req, res) => {
                 "dnc_state",
                 "registered_on",
                 "selected_on",
+                "iq_level",
+                "attitude",
+                "aspiration",
+                "has_laptop",
+                "got_to_know_from",
               ],
             },
           ],
@@ -105,6 +112,7 @@ export default router.get("/", authenticate, async (req, res) => {
         "datetime",
         "url",
         "event_type",
+        "event_descriprion",
         "batch_id",
         "createdAt",
       ],
@@ -119,17 +127,13 @@ export default router.get("/", authenticate, async (req, res) => {
     batchEvents = batchEvents.map((itm) => {
       return {
         ...itm.toJSON(),
-        //   datetime: moment
-        //     .utc(itm.datetime)
-        //     .tz("Europe/Berlin")
-        //     .format("YYYY-MM-DD HH:mm:ss"),
-        datetime: moment(itm.datetime).format("YYYY-MM-DD HH:mm:ss"),
+        datetime: itm.datetime,
       };
     });
 
     return send(res, RESPONSE.SUCCESS, batchEvents);
   } catch (error) {
-    console.log("list event", error);
+    console.log("list event error:", error);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

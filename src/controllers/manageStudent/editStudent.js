@@ -17,9 +17,9 @@ const router = Router();
 
 export default router.put("/", authenticate, async (req, res) => {
   try {
-    if (req.user.role != ROLE.STUDENT) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
+    // if (req.user.role != ROLE.STUDENT) {
+    //   return send(res, RESPONSE.ACCESS_DENIED);
+    // }
 
     uploads(req, res, async (err) => {
       let updates = {};
@@ -38,13 +38,28 @@ export default router.put("/", authenticate, async (req, res) => {
         }
       }
 
-      const student_id = req.user.id;
+      let student_id;
+      if (req.user.role != ROLE.STUDENT) {
+        if (!req.query.student_id || req.query.student_id == undefined) {
+          return send(res, setErrResMsg(RESPONSE.REQUIRED, "student_id"));
+        }
+
+        student_id = req.query.student_id;
+      } else {
+        student_id = req.user.id;
+      }
+
       const {
         name,
         phone,
         email,
         // password,
+        dob,
+        gender,
+        college,
         location,
+        city,
+        district,
         education,
         cgpa,
         year_passed,
@@ -65,6 +80,12 @@ export default router.put("/", authenticate, async (req, res) => {
         father_occ,
         mother_occ,
         income,
+        iq_level,
+        attitude,
+        aspiration,
+        has_laptop,
+        got_to_know_from,
+        referedby,
       } = req.body;
 
       let studentModel = await initstudentModel();
@@ -100,7 +121,7 @@ export default router.put("/", authenticate, async (req, res) => {
 
           return send(
             res,
-            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone")
+            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone"),
           );
         } else {
           updates.phone = phone;
@@ -108,7 +129,7 @@ export default router.put("/", authenticate, async (req, res) => {
       }
       if (email && email != undefined) {
         const emailPattern = String(email).match(
-          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
         );
 
         if (!emailPattern) {
@@ -133,7 +154,7 @@ export default router.put("/", authenticate, async (req, res) => {
           deletefile(`public/${imagedir}`, filename);
           return send(
             res,
-            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email")
+            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email"),
           );
         } else {
           updates.email = email;
@@ -145,10 +166,25 @@ export default router.put("/", authenticate, async (req, res) => {
       if (location && location != undefined) {
         updates.location = location;
       }
+      if (dob && dob != undefined) {
+        updates.dob = dob;
+      }
+      if (city && city != undefined) {
+        updates.city = city;
+      }
+      if (district && district != undefined) {
+        updates.district = district;
+      }
+      if (gender && gender != undefined) {
+        updates.gender = gender;
+      }
+      if (college && college != undefined) {
+        updates.college = college;
+      }
       if (education && education != undefined) {
         updates.education = education;
       }
-      if (cgpa && cgpa == "") {
+      if (cgpa && cgpa != undefined) {
         updates.cgpa = cgpa;
       }
       if (year_passed && year_passed != undefined) {
@@ -206,6 +242,27 @@ export default router.put("/", authenticate, async (req, res) => {
       }
       if (income && income != undefined) {
         updates.income = income;
+      }
+      if (iq_level && iq_level != undefined) {
+        updates.iq_level = iq_level;
+      }
+      if (attitude && attitude != undefined) {
+        updates.attitude = attitude;
+      }
+      if (aspiration && aspiration != undefined) {
+        updates.aspiration = aspiration;
+      }
+      if (has_laptop && has_laptop != undefined) {
+        updates.has_laptop = has_laptop;
+      }
+      if (got_to_know_from && got_to_know_from != undefined) {
+        updates.got_to_know_from = got_to_know_from;
+      }
+
+      if (referedby && referedby != undefined) {
+        updates.referedby = referedby;
+      } else if (got_to_know_from && got_to_know_from !== "Referral") {
+        updates.referedby = null;
       }
 
       await studentModel.update(updates, {

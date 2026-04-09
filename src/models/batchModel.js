@@ -57,12 +57,14 @@ const initbatchModel = async () => {
     const sequelize = await getConnection();
     batch = sequelize.define("batch", batchModel, {
       freezeTableName: true,
+      timestamps: false,
     });
 
     // Staff.hasMany(Batch, { foreignKey: "created_by", as: "batches" });
     // Batch.belongsTo(Staff, { foreignKey: "created_by", as: "creator" });
 
     const user = await initaccountModel();
+    if (!user) throw new Error("Account model not initialized");
     batch.belongsTo(user, {
       as: "createdBy",
       onDelete: "cascade",

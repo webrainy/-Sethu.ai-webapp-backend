@@ -31,30 +31,35 @@ export default router.post("/", authenticate, async (req, res) => {
     // }
 
     uploads(req, res, async (err) => {
-      if (req.files != undefined) {
-        if (err) {
-          return send(res, setErrResMsg(RESPONSE.MULTER_ERROR, err.message));
-        }
-        // if (!req.files.profile) {
-        //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Profile"));
-        // }
-
-        if (!req.files.resume || !req.files.resume == undefined) {
-          return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
-        }
-        // if (!req.files.coverletter) {
-        //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Cover letter"));
-        // }
-      } else {
-        return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
+      // if (req.files != undefined) {
+      if (err) {
+        return send(res, setErrResMsg(RESPONSE.MULTER_ERROR, err.message));
       }
+      // if (!req.files.profile) {
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Profile"));
+      // }
+
+      // if (!req.files.resume || !req.files.resume == undefined) {
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
+      // }
+      // if (!req.files.coverletter) {
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Cover letter"));
+      // }
+      // } else {
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
+      // }
 
       const {
         name,
         phone,
         email,
         password,
+        dob,
+        gender,
+        college,
         location,
+        city,
+        district,
         education,
         cgpa,
         year_passed,
@@ -75,10 +80,17 @@ export default router.post("/", authenticate, async (req, res) => {
         father_occ,
         mother_occ,
         income,
+        isfrefered,
+        referedby,
       } = req.body;
-      let resume = req.files.resume[0].filename;
+      // let resume = req.files.resume[0].filename;
+
       // let coverletter = req.files.coverletter[0].filename;
-      let filePath = [resume];
+      let filePath = [];
+      let resume = req.files.resume
+        ? req.files.resume[0].filename &&
+          filePath.push(req.files.resume[0].filename)
+        : null;
       let profile = req.files.profile
         ? req.files.profile[0].filename &&
           filePath.push(req.files.profile[0].filename)
@@ -102,9 +114,29 @@ export default router.post("/", authenticate, async (req, res) => {
         deletefile(`public/${imagedir}`, filePath);
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "password"));
       }
-      if (location == "" || location == undefined) {
+      if (dob == "" || dob == undefined) {
         deletefile(`public/${imagedir}`, filePath);
-        return send(res, setErrResMsg(RESPONSE.REQUIRED, "location"));
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "dob"));
+      }
+      if (gender == "" || gender == undefined) {
+        deletefile(`public/${imagedir}`, filePath);
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "gender"));
+      }
+      if (college == "" || college == undefined) {
+        deletefile(`public/${imagedir}`, filePath);
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "college"));
+      }
+      // if (location == "" || location == undefined) {
+      //   deletefile(`public/${imagedir}`, filePath);
+      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "location"));
+      // }
+      if (city == "" || city == undefined) {
+        deletefile(`public/${imagedir}`, filePath);
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "city"));
+      }
+      if (district == "" || district == undefined) {
+        deletefile(`public/${imagedir}`, filePath);
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "district"));
       }
       if (education == "" || education == undefined) {
         deletefile(`public/${imagedir}`, filePath);
@@ -186,9 +218,14 @@ export default router.post("/", authenticate, async (req, res) => {
         deletefile(`public/${imagedir}`, filePath);
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "income"));
       }
+      if (isfrefered) {
+        if (referedby == "" || referedby == undefined) {
+          return send(res, setErrResMsg(RESPONSE.REQUIRED, "ReferedBy"));
+        }
+      }
 
       const emailPattern = String(email).match(
-        /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+        /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
       );
 
       if (!emailPattern) {
@@ -203,7 +240,7 @@ export default router.post("/", authenticate, async (req, res) => {
       }
 
       const pwdPattern = String(password).match(
-        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/
+        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/,
       );
       if (!pwdPattern) {
         deletefile(`public/${imagedir}`, filePath);
@@ -242,7 +279,7 @@ export default router.post("/", authenticate, async (req, res) => {
         deletefile(`public/${imagedir}`, filePath);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone")
+          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone"),
         );
       }
 
@@ -250,14 +287,14 @@ export default router.post("/", authenticate, async (req, res) => {
         deletefile(`public/${imagedir}`, filePath);
         return send(
           res,
-          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email")
+          setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email"),
         );
       }
 
       // const encryptedPassword = await bcrypt.hash(password, HASH_ROUND);
       const encryptedPassword = CryptoJS.AES.encrypt(
         password,
-        process.env.SECRET_KEY
+        process.env.SECRET_KEY,
       ).toString();
 
       let student = await studentModel.create({

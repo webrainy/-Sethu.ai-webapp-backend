@@ -6,8 +6,6 @@ import updateStudent from "./updateStudent.js";
 import editStudent from "./editStudent.js";
 
 
-
-
 const router = Router();
 
 router.use("/create", createStudent);

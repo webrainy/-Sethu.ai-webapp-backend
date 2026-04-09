@@ -18,6 +18,7 @@ import initinterviewModel from "../../models/interviewModel.js";
 import moment from "moment";
 import initaccountModel from "../../models/accountModel.js";
 import path from "path";
+import { Op } from "sequelize";
 const __dirname = path.resolve();
 const router = Router();
 
@@ -40,6 +41,8 @@ export default router.put("/", authenticate, async (req, res) => {
       exam_marks,
       int_datetime,
       int_result,
+      int_comment,
+      interviewer_id,
     } = req.body;
 
     let studentModel = await initstudentModel();
@@ -137,10 +140,18 @@ Sri Sathya Sai Skill Development Program
           student_id,
         },
       });
+      let interviewUpdates = {};
+      if (int_comment && int_comment != undefined) {
+        interviewUpdates.int_comment = int_comment;
+      }
+      if (interviewer_id && interviewer_id != undefined) {
+        interviewUpdates.interviewer_id = interviewer_id;
+      }
 
       if (interview) {
         await interviewModel.update(
           {
+            ...interviewUpdates,
             int_datetime,
             int_result: int_result ? int_result : RESULT.PENDING,
           },
@@ -150,6 +161,7 @@ Sri Sathya Sai Skill Development Program
         );
       } else {
         await interviewModel.create({
+          ...interviewUpdates,
           int_datetime,
           int_result: int_result ? int_result : RESULT.PENDING,
           student_id,
@@ -283,12 +295,12 @@ for Sri Sathya Sai Skill Development Project
 
           if (student.rollno == null) {
             let latest = await studentModel.findOne({
-              where: { isactive: STATE.ACTIVE },
-              order: [["sequence", "ASC"]],
+              where: { isactive: STATE.ACTIVE, sequence: { [Op.ne]: null } },
+              order: [["sequence", "DESC"]],
             });
 
             let x = latest != null ? latest.sequence + 1 : 1;
-            let formattedSeq = x.toString().padStart(3, "0");
+            let formattedSeq = x.toString().padStart(2, "0");
 
             let rollno = `SSSSDP-D${formattedSeq}`;
             let sequence = latest != null ? latest.sequence + 1 : 1;

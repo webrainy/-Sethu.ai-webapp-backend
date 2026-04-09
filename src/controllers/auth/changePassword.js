@@ -8,20 +8,13 @@ import {
   ROLE,
   STATE,
 } from "../../config/constants.js";
-import image from "../../middlewares/uploads.js";
 // import bcrypt from "bcrypt";
 import CryptoJS from "crypto-js";
-import { deletefile } from "../../middlewares/deleteFile.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initaccountmodel from "../../models/accountModel.js";
 // import { sendEmails } from "../../middlewares/emailMessage.js";
 import authenticate from "../../middlewares/authenticate.js";
 
-const imagedir = "document/";
-const uploads = image(imagedir).fields([
-  { name: "resume", maxCount: 1 },
-  { name: "profile", maxCount: 1 },
-]);
 const router = Router();
 
 export default router.post("/", authenticate, async (req, res) => {
@@ -29,6 +22,7 @@ export default router.post("/", authenticate, async (req, res) => {
     const { old_password, new_password, confirm_password } = req.body;
 
     let accountModel = await initaccountmodel();
+    let studentModel = await initstudentmodel();
 
     if (old_password == "" || old_password == undefined) {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "old_password"));
@@ -40,7 +34,7 @@ export default router.post("/", authenticate, async (req, res) => {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "confirm_password"));
     }
     const pwdPattern = String(new_password).match(
-      /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/
+      /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/,
     );
     if (!pwdPattern) {
       return send(res, setErrResMsg(RESPONSE.INVALID, "password pattern"));
@@ -49,13 +43,21 @@ export default router.post("/", authenticate, async (req, res) => {
     if (new_password != confirm_password) {
       return send(
         res,
-        setErrResMsg(RESPONSE.NOT_MATCH, "password & confirm password")
+        setErrResMsg(RESPONSE.NOT_MATCH, "password & confirm password"),
       );
     }
 
-    const accountdata = await accountModel.findOne({
-      where: { account_id: req.user.id },
-    });
+    let accountdata;
+
+    if (req.user.role == ROLE.STUDENT) {
+      accountdata = await studentModel.findOne({
+        where: { student_id: req.user.id },
+      });
+    } else {
+      accountdata = await accountModel.findOne({
+        where: { account_id: req.user.id },
+      });
+    }
 
     // const validOldPassword = await bcrypt.compare(
     //   old_password,
@@ -64,7 +66,7 @@ export default router.post("/", authenticate, async (req, res) => {
 
     const bytes = CryptoJS.AES.decrypt(
       accountdata.password,
-      process.env.TOKEN_KEY
+      process.env.TOKEN_KEY,
     );
     const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
 
@@ -72,13 +74,20 @@ export default router.post("/", authenticate, async (req, res) => {
       // const encryptPassword = await bcrypt.hash(new_password, HASH_ROUND);
       const encryptPassword = CryptoJS.AES.encrypt(
         new_password,
-        process.env.TOKEN_KEY
+        process.env.TOKEN_KEY,
       ).toString();
 
-      await accountModel.update(
-        { password: encryptPassword },
-        { where: { account_id: req.user.id } }
-      );
+      if (req.user.role == ROLE.STUDENT) {
+        await studentModel.update(
+          { password: encryptPassword },
+          { where: { student_id: req.user.id } },
+        );
+      } else {
+        await accountModel.update(
+          { password: encryptPassword },
+          { where: { account_id: req.user.id } },
+        );
+      }
 
       return send(res, RESPONSE.SUCCESS);
     } else {

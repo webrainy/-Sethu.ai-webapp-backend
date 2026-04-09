@@ -5,6 +5,10 @@ import batchApiHandler from "./src/controllers/manageBatch/apiHandler.js";
 import assignmentApiHandler from "./src/controllers/manageAssignment/apiHandler.js";
 import eventApiHandler from "./src/controllers/manageEvent/apiHandler.js";
 import attendanceApiHandler from "./src/controllers/manageAttendance/apiHandler.js";
+import updateSequence from "./src/controllers/testApis/updateSequence.js";
+import studentassigntmentApiHandler from "./src/controllers/managestdassignment/apiHandler.js";
+import examApiHandler from "./src/controllers/manageexams/apiHandle.js";
+import feedbackApiHandler from "./src/controllers/managefeedback/apiHandler.js";
 
 const routes = (app) => {
   app.use("/api/auth", authApiHandler);
@@ -14,6 +18,12 @@ const routes = (app) => {
   app.use("/api/assign", assignmentApiHandler);
   app.use("/api/event", eventApiHandler);
   app.use("/api/attendance", attendanceApiHandler);
+  app.use("/api/student/assignment", studentassigntmentApiHandler);
+  app.use("/api/exam", examApiHandler);
+  app.use("/api/feedback", feedbackApiHandler);
+  // app.use("/api/update/sequence", updateSequence);
 };
 
 export default routes;
+
+

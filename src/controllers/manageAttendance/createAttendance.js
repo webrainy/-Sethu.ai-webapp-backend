@@ -5,6 +5,7 @@ import { RESPONSE } from "../../config/global.js";
 import initattendanceItm from "../../models/attendanceitmModel.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initAttendanceModel from "../../models/attendanceModel.js";
+import moment from "moment";
 
 const router = Router();
 
@@ -14,7 +15,13 @@ export default router.post("/", authenticate, async (req, res) => {
     //   return send(res, RESPONSE.ACCESS_DENIED);
     // }
 
-    let { attendance_type, attendance_status, student_id, batch_id } = req.body;
+    let {
+      attendance_type,
+      attendance_status,
+      student_id,
+      batch_id,
+      attendance_date,
+    } = req.body;
 
     let attendanceItmModel = await initattendanceItm();
     let attendanceModel = await initAttendanceModel();
@@ -31,6 +38,9 @@ export default router.post("/", authenticate, async (req, res) => {
     if (batch_id == "" || batch_id == undefined) {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "batch_id"));
     }
+    if (attendance_date == "" || attendance_date == undefined) {
+      return send(res, setErrResMsg(RESPONSE.REQUIRED, "attendance_date"));
+    }
 
     if (!Array.isArray(student_id)) {
       student_id = [student_id];
@@ -38,32 +48,39 @@ export default router.post("/", authenticate, async (req, res) => {
     if (!Array.isArray(attendance_status)) {
       attendance_status = [attendance_status];
     }
-    const date = Date.now();
 
+    if (student_id.length == attendance_status.length) {
+      let attendance = await attendanceModel.create({
+        attendance_type,
+        datetime: moment(attendance_date)
+          .set({
+            hour: moment().hour(),
+            minute: moment().minute(),
+            second: moment().second(),
+          })
+          .toDate(),
+        batch_id,
+        account_id: req.user.id,
+      });
+      for (let i = 0; i < student_id.length; i++) {
+        await attendanceItmModel.create({
+          student_id: student_id[i],
+          attendance_status: attendance_status[i],
+          attendance_id: attendance.attendance_id,
+          datetime: moment(attendance_date)
+            .set({
+              hour: moment().hour(),
+              minute: moment().minute(),
+              second: moment().second(),
+            })
+            .toDate(),
+        });
+      }
 
-if (student_id.length == attendance_status.length) {
-  let attendance = await attendanceModel.create({
-    attendance_type,
-    datetime: date,
-    batch_id,
-    account_id: req.user.id,
-  });
-  for (let i = 0; i < student_id.length; i++) {
-    await attendanceItmModel.create({
-      student_id: student_id[i],
-      attendance_status:attendance_status[i],
-      attendance_id: attendance.attendance_id,
-      datetime: date,
-    });
-  }
-
-  return send(res, RESPONSE.SUCCESS);
-}else{
-  return send(res,setErrResMsg( RESPONSE.ERR,"Some fields are missing"));
-
-}
-
-
+      return send(res, RESPONSE.SUCCESS);
+    } else {
+      return send(res, setErrResMsg(RESPONSE.ERR, "Some fields are missing"));
+    }
   } catch (err) {
     console.log("create attendance", err);
     return send(res, RESPONSE.UNKNOWN_ERROR);

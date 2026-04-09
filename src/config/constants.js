@@ -20,6 +20,9 @@ export const CURRENT_STATE = {
   FOLLOW_UP: 3,
   REJECTED: 4,
   UNABLE_TO_DECIDE: 5,
+  EXAM_SCHEDULED: 6,
+  EXAM_PASSED: 7,
+  ASSIGNED: 8,
 };
 
 export const COMPLITION_STATUS = {
@@ -48,6 +51,7 @@ export const BATCH_STATE = {
   NOT_ASSIGNED: 1,
   ASSIGNED: 2,
 };
+
 export const DNC_STATE = {
   CALL: 1,
   DONT_CALL: 2,
@@ -57,6 +61,12 @@ export const STATE = {
   ACTIVE: 1,
   INACTIVE: 0,
 };
+
+export const IS_REFERED = {
+  YES: 1,
+  NO: 2,
+};
+
 export const ATTENDANCE_TYPE = {
   CLASS: 1,
   LAB: 2,
@@ -68,4 +78,26 @@ export const ATTENDANCE_STATUS = {
   ABSENT: 0,
 };
 
+export const ASSIGNED_STATUS = {
+  ASSIGNED: 2,
+  UNASSIGNED: 1,
+};
+
+export const GOT_TO_KNOW_FROM = {
+  WHATSAPP: "WhatsApp",
+  SOCIAL_MEDIA: "Social Media",
+  PAPER_AD: "Paper Ad",
+  COLLEGE: "College",
+  FRIENDS: "Friends",
+  EMAIL: "Email",
+  TASK: "TASK",
+  STUDENT_TRIBE: "Student Tribe",
+  REFERRAL: "Referral",
+};
+
+export const FEEDBACK_TYPE = {
+  SOFT_SKILL: 1,
+  TECHNICAL: 2,
+  JOB_NEED: 3,
+};
 export const HASH_ROUND = 10;

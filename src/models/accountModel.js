@@ -34,26 +34,20 @@ const accountModel = {
 };
 
 let account = null;
+
 const initaccountModel = async () => {
   try {
     if (account) return account;
+
     const sequelize = await getConnection();
+
     account = sequelize.define("accountmodel", accountModel, {
       freezeTableName: true,
-    });
-
-    const user = await initaccountModel();
-    account.belongsTo(user, {
-      as: "createdBy",
-      onDelete: "cascade",
-      foreignKey: {
-        allowNull: true,
-        name: "account",
-      },
-      targetKey: "account_id",
+      timestamps: true,
     });
 
     await account.sync({ alter: true });
+
     return account;
   } catch (err) {
     console.log("account model", err.message);
