@@ -365,7 +365,7 @@ export default router.get("/", authenticate, async (req, res) => {
           attributes: studentAttribute,
         },
       ],
-      order: [["batch_id", "DESC"]],
+      order: [["start_date", "DESC"]],
       offset: skip,
       limit: limit,
     });

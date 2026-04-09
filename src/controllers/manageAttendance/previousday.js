@@ -6,7 +6,7 @@ import initstudentmodel from "../../models/studentModel.js";
 import initaccountModel from "../../models/accountModel.js";
 import initAttendanceModel from "../../models/attendanceModel.js";
 import initattendanceItm from "../../models/attendanceitmModel.js";
-import moment from "moment";
+import moment from "moment-timezone";
 import { Op } from "sequelize";
 import { STATE } from "../../config/constants.js";
 const router = Router();
@@ -19,9 +19,13 @@ export default router.get("/", authenticate, async (req, res) => {
       return send(res, setErrResMsg(RESPONSE.REQUIRED, "batch_id"));
     }
 
-    //  yesterday date
-    let startOfDay = moment().subtract(1, "day").startOf("day");
-    let endOfDay = moment().subtract(1, "day").endOf("day");
+    // Use date from query if provided, otherwise fallback to yesterday
+    const reportDate = req.query.date
+      ? moment.tz(req.query.date, "Asia/Kolkata")
+      : moment().tz("Asia/Kolkata").subtract(1, "day");
+
+    let startOfDay = reportDate.clone().startOf("day").utc().toDate();
+    let endOfDay = reportDate.clone().endOf("day").utc().toDate();
 
     let query = {
       isactive: STATE.ACTIVE,

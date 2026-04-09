@@ -218,6 +218,7 @@ export default router.get("/", authenticate, async (req, res) => {
         "aspiration",
         "has_laptop",
         "got_to_know_from",
+        "referedby",
         "createdAt",
       ],
       order: [["createdAt", "DESC"]],

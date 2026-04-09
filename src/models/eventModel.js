@@ -27,7 +27,7 @@ const eventModel = {
     allowNull: false,
   },
   event_descriprion: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true,
   },
   isactive: {

@@ -8,21 +8,18 @@ import initassignmentModel from "../../models/assignment.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initbatchModel from "../../models/batchModel.js";
 import initaccountModel from "../../models/accountModel.js";
+import initstudentassignment from "../../models/studentassignment.js";
 const router = Router();
 
 export default router.get("/", authenticate, async (req, res) => {
   try {
-    // if (req.user.role != ROLE.ADMIN) {
-    //   return send(res, RESPONSE.ACCESS_DENIED);
-    // }
     let student_id;
     if (req.user.role == ROLE.STUDENT) {
       student_id = req.user.id;
     } else {
       student_id = req.query.student_id;
-      if (student_id == "" || student_id == undefined) {
+      if (!student_id)
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "student_id"));
-      }
     }
 
     const assignmentItmModel = await initassignmentItmModel();
@@ -30,9 +27,10 @@ export default router.get("/", authenticate, async (req, res) => {
     const studentModel = await initstudentmodel();
     const batchModel = await initbatchModel();
     const accountModel = await initaccountModel();
+    const studentAssignmentModel = await initstudentassignment(); // ← ADD
 
     let studentInfo = await studentModel.findAll({
-      where: { isactive: STATE.ACTIVE, student_id: student_id },
+      where: { isactive: STATE.ACTIVE, student_id },
       attributes: ["student_id", "name", "rollno"],
       include: [
         {
@@ -44,10 +42,7 @@ export default router.get("/", authenticate, async (req, res) => {
     });
 
     let assignments = await assignmentItmModel.findAll({
-      where: {
-        isactive: STATE.ACTIVE,
-        student_id: student_id,
-      },
+      where: { isactive: STATE.ACTIVE, student_id },
       include: [
         {
           model: assignmentModel,
@@ -68,6 +63,20 @@ export default router.get("/", authenticate, async (req, res) => {
             },
           ],
         },
+        // ✅ Include the student's actual submission
+        {
+          model: studentAssignmentModel,
+          as: "studentSubmission", // ← also add this association in assignmentItm model (see below)
+          attributes: [
+            "stassign_id",
+            "assignment_url",
+            "assignment_doc",
+            "assignment_description",
+            "st_assignment_status",
+            "createdAt",
+          ],
+          required: false,
+        },
       ],
       attributes: [
         "assign_id",
@@ -80,10 +89,6 @@ export default router.get("/", authenticate, async (req, res) => {
       ],
       order: [["createdAt", "DESC"]],
     });
-
-    // if (assignments.length == 0) {
-    //   return send(res, setErrResMsg(RESPONSE.NOT_FOUND, "assignment"));
-    // }
 
     return send(res, RESPONSE.SUCCESS, { studentInfo, assignments });
   } catch (error) {

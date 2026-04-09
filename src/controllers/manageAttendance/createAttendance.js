@@ -5,6 +5,7 @@ import { RESPONSE } from "../../config/global.js";
 import initattendanceItm from "../../models/attendanceitmModel.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initAttendanceModel from "../../models/attendanceModel.js";
+import moment from "moment";
 
 const router = Router();
 
@@ -14,8 +15,13 @@ export default router.post("/", authenticate, async (req, res) => {
     //   return send(res, RESPONSE.ACCESS_DENIED);
     // }
 
-    let { attendance_type, attendance_status, student_id, batch_id, attendance_date } =
-      req.body;
+    let {
+      attendance_type,
+      attendance_status,
+      student_id,
+      batch_id,
+      attendance_date,
+    } = req.body;
 
     let attendanceItmModel = await initattendanceItm();
     let attendanceModel = await initAttendanceModel();
@@ -46,7 +52,13 @@ export default router.post("/", authenticate, async (req, res) => {
     if (student_id.length == attendance_status.length) {
       let attendance = await attendanceModel.create({
         attendance_type,
-        datetime: attendance_date,
+        datetime: moment(attendance_date)
+          .set({
+            hour: moment().hour(),
+            minute: moment().minute(),
+            second: moment().second(),
+          })
+          .toDate(),
         batch_id,
         account_id: req.user.id,
       });
@@ -55,7 +67,13 @@ export default router.post("/", authenticate, async (req, res) => {
           student_id: student_id[i],
           attendance_status: attendance_status[i],
           attendance_id: attendance.attendance_id,
-          datetime: attendance_date,
+          datetime: moment(attendance_date)
+            .set({
+              hour: moment().hour(),
+              minute: moment().minute(),
+              second: moment().second(),
+            })
+            .toDate(),
         });
       }
 

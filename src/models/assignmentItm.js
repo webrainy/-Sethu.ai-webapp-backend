@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import getConnection from "../helper/databaseConnection.js";
-
 import initassignmentModel from "./assignment.js";
 import initstudentmodel from "./studentModel.js";
 
@@ -29,10 +28,12 @@ const assignmentItmModel = {
 };
 
 let assignmentItm = null;
+
 const initAssignmentItm = async () => {
   try {
     if (assignmentItm) return assignmentItm;
     const sequelize = await getConnection();
+
     assignmentItm = sequelize.define("workassigned", assignmentItmModel, {
       freezeTableName: true,
     });
@@ -43,41 +44,41 @@ const initAssignmentItm = async () => {
     assignmentItm.belongsTo(student, {
       as: "studentInfo",
       onDelete: "cascade",
-      foreignKey: {
-        allowNull: false,
-        name: "student_id",
-      },
+      foreignKey: { allowNull: false, name: "student_id" },
       targetKey: "student_id",
     });
-
     student.hasMany(assignmentItm, {
       as: "assignments",
       onDelete: "cascade",
-      foreignKey: {
-        allowNull: false,
-        name: "student_id",
-      },
+      foreignKey: { allowNull: false, name: "student_id" },
       targetKey: "student_id",
     });
 
     assignmentItm.belongsTo(assignment, {
       as: "assignmentInfo",
       onDelete: "cascade",
-      foreignKey: {
-        allowNull: false,
-        name: "assignment_id",
-      },
+      foreignKey: { allowNull: false, name: "assignment_id" },
+      targetKey: "assignment_id",
+    });
+    assignment.hasMany(assignmentItm, {
+      as: "assignmentItems",
+      onDelete: "cascade",
+      foreignKey: { allowNull: false, name: "assignment_id" },
       targetKey: "assignment_id",
     });
 
-    assignment.hasMany(assignmentItm, {
-      as: "assignmentInfo",
+    const { default: initstudentassignment } =
+      await import("./studentassignment.js");
+    const studentAssignment = await initstudentassignment();
+
+    assignmentItm.hasOne(studentAssignment, {
+      foreignKey: "assign_id",
+      as: "studentSubmission", // ← keep this
       onDelete: "cascade",
-      foreignKey: {
-        allowNull: false,
-        name: "assignment_id",
-      },
-      targetKey: "assignment_id",
+    });
+    studentAssignment.belongsTo(assignmentItm, {
+      foreignKey: "assign_id",
+      as: "workAssigned", //
     });
 
     await assignmentItm.sync({ alter: true });

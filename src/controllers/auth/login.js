@@ -61,7 +61,7 @@ export default router.post("/", async (req, res) => {
     if (userData) {
       const bytes = CryptoJS.AES.decrypt(
         userData.password,
-        process.env.TOKEN_KEY
+        process.env.TOKEN_KEY,
       );
       const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
       if (decryptPassword == password) {
@@ -71,7 +71,7 @@ export default router.post("/", async (req, res) => {
           role: accountData ? accountData.role : studentData.role,
           access_token: token,
         });
-      }else {
+      } else {
         return send(res, setErrResMsg(RESPONSE.INVALID, "Login credential"));
       }
     } else {

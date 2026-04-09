@@ -196,7 +196,7 @@ const studentInfo = {
   dnc_state: {
     //Do not call again status
     type: DataTypes.INTEGER,
-    default: DNC_STATE.CALL,
+    defaultValue: DNC_STATE.CALL,
   },
   has_laptop: {
     type: DataTypes.STRING,
@@ -243,10 +243,11 @@ const initstudentmodel = async () => {
     const sequelize = await getConnection();
     student = sequelize.define("studentmodel", studentInfo, {
       freezeTableName: true,
-      timeStamp: true,
+      timestamps: true,
     });
 
     const batch = await initbatchModel();
+    if (!batch) throw new Error("Batch model not initialized");
     student.belongsTo(batch, {
       as: "batchInfo",
       onDelete: "cascade",

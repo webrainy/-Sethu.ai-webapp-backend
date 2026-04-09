@@ -5,16 +5,15 @@ import {
   CURRENT_STATE,
   DNC_STATE,
   HASH_ROUND,
+  GOT_TO_KNOW_FROM,
   ROLE,
   STATE,
 } from "../../config/constants.js";
 import image from "../../middlewares/uploads.js";
-// import bcrypt from "bcrypt";
 import CryptoJS from "crypto-js";
 import { deletefile } from "../../middlewares/deleteFile.js";
 import initstudentmodel from "../../models/studentModel.js";
 import initaccountmodel from "../../models/accountModel.js";
-// import { sendEmails } from "../../middlewares/emailMessage.js";
 import { resendMail } from "../../middlewares/resend.js";
 
 const imagedir = "document/";
@@ -27,19 +26,9 @@ const router = Router();
 export default router.post("/", async (req, res) => {
   try {
     uploads(req, res, async (err) => {
-      // if (req.files != undefined) {
       if (err) {
         return send(res, setErrResMsg(RESPONSE.MULTER_ERROR, err.message));
       }
-      // if (!req.files.resume || !req.files.resume == undefined) {
-      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
-      // }
-      // if (!req.files.profile || req.files.profile == undefined) {
-      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Cover letter"));
-      // }
-      // } else {
-      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "Resume"));
-      // }
 
       const {
         name,
@@ -77,252 +66,153 @@ export default router.post("/", async (req, res) => {
         aspiration,
         has_laptop,
         got_to_know_from,
-        isrefered,
         referedby,
-        course_source,
       } = req.body;
-      // let resume = req.files.resume[0].filename;
+
       let resume = req.files.resume ? req.files.resume[0].filename : null;
       let profile = req.files.profile ? req.files.profile[0].filename : null;
       let studentModel = await initstudentmodel();
       let accountModel = await initaccountmodel();
 
-      if (name == "" || name == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
+      // helper to clean up files on error
+      const cleanup = () => {
+        if (req.files.profile) {
+          deletefile(`public/${imagedir}`, [resume, profile]);
+        }
+      };
+
+      if (!name) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "name"));
       }
-      if (phone == "" || phone == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!phone) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "phone"));
       }
-      if (email == "" || email == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!email) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "email"));
       }
-      if (password == "" || password == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!password) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "password"));
       }
-      if (dob == "" || dob == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!dob) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "dob"));
       }
-      if (gender == "" || gender == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!gender) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "gender"));
       }
-      if (college == "" || college == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!college) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "college"));
       }
-      // if (location == "" || location == undefined) {
-      //   req.files.profile
-      //     ? deletefile(`public/${imagedir}`, [resume, profile])
-      //     : "";
-
-      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "location"));
-      // }
-      if (city == "" || city == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
+      if (!city) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "city"));
       }
-
-      if (district == "" || district == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
+      if (!district) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "district"));
       }
-
-      if (education == "" || education == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!education) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "education"));
       }
-      if (cgpa == "" || cgpa == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!cgpa) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "cgpa"));
       }
-      if (year_passed == "" || year_passed == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!year_passed) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "year_passed"));
       }
-      if (gmat == "" || gmat == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!gmat) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "gmat"));
       }
-      if (course_prep == "" || course_prep == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!course_prep) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "course_prep"));
       }
-      if (curnt_work == "" || curnt_work == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!curnt_work) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "curnt_work"));
       }
-      if (commit_ft == "" || commit_ft == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!commit_ft) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "commit_ft"));
       }
-      if (sk_python == "" || sk_python == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!sk_python) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_python"));
       }
-      if (sk_sql == "" || sk_sql == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!sk_sql) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_sql"));
       }
-      if (sk_java == "" || sk_java == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!sk_java) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_java"));
       }
-      if (sk_analyticalskill == "" || sk_analyticalskill == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!sk_analyticalskill) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_analyticalskill"));
       }
-      if (sk_prblmsolving == "" || sk_prblmsolving == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!sk_prblmsolving) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_prblmsolving"));
       }
-      if (sk_engprof == "" || sk_engprof == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!sk_engprof) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "sk_engprof"));
       }
-      if (hckr_rnk == "" || hckr_rnk == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!hckr_rnk) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "hckr_rnk"));
       }
-      if (hobbies == "" || hobbies == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!hobbies) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "hobbies"));
       }
-      // if (linkedin_url == "" || linkedin_url == undefined) {
-      //   req.files.profile
-      //     ? deletefile(`public/${imagedir}`, [resume, profile])
-      //     : "";
-
-      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "linkedin_url"));
-      // }
-      // if (github_url == "" || github_url == undefined) {
-      //   req.files.profile
-      //     ? deletefile(`public/${imagedir}`, [resume, profile])
-      //     : "";
-
-      //   return send(res, setErrResMsg(RESPONSE.REQUIRED, "github_url"));
-      // }
-      if (father_occ == "" || father_occ == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!father_occ) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "father_occ"));
       }
-      if (mother_occ == "" || mother_occ == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!mother_occ) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "mother_occ"));
       }
-      if (income == "" || income == undefined) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+      if (!income) {
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.REQUIRED, "income"));
       }
-      if (isrefered == 1) {
-        if (!referedby) {
-          req.files.profile
-            ? deletefile(`public/${imagedir}`, [resume, profile])
-            : "";
-          return send(res, setErrResMsg(RESPONSE.REQUIRED, "Refered By"));
-        }
+
+      // got_to_know_from validation
+      if (!got_to_know_from) {
+        cleanup();
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "got_to_know_from"));
+      }
+
+      // if Referral selected, referedby is mandatory
+      if (got_to_know_from === GOT_TO_KNOW_FROM.REFERRAL && !referedby) {
+        cleanup();
+        return send(res, setErrResMsg(RESPONSE.REQUIRED, "referedby"));
       }
 
       const emailPattern = String(email).match(
         /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
       );
-
       if (!emailPattern) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.INVALID, "Email"));
       }
 
       const pPattern = String(phone).match(/^\+\d{10,15}$/);
       if (!pPattern) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.INVALID, "Phone"));
       }
 
@@ -330,45 +220,25 @@ export default router.post("/", async (req, res) => {
         /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,32}$/,
       );
       if (!pwdPattern) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+        cleanup();
         return send(res, setErrResMsg(RESPONSE.INVALID, "password pattern"));
       }
 
       let isaccountPhone = await accountModel.findOne({
-        where: {
-          isactive: STATE.ACTIVE,
-          phone,
-        },
+        where: { isactive: STATE.ACTIVE, phone },
       });
-
       let isaccountEmail = await accountModel.findOne({
-        where: {
-          isactive: STATE.ACTIVE,
-          email,
-        },
+        where: { isactive: STATE.ACTIVE, email },
       });
-
       let isphoneExist = await studentModel.findOne({
-        where: {
-          isactive: STATE.ACTIVE,
-          phone,
-        },
+        where: { isactive: STATE.ACTIVE, phone },
       });
       let isemailExist = await studentModel.findOne({
-        where: {
-          isactive: STATE.ACTIVE,
-          email,
-        },
+        where: { isactive: STATE.ACTIVE, email },
       });
 
       if (isphoneExist || isaccountPhone) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+        cleanup();
         return send(
           res,
           setErrResMsg(
@@ -378,10 +248,7 @@ export default router.post("/", async (req, res) => {
         );
       }
       if (isemailExist || isaccountEmail) {
-        req.files.profile
-          ? deletefile(`public/${imagedir}`, [resume, profile])
-          : "";
-
+        cleanup();
         return send(
           res,
           setErrResMsg(
@@ -390,8 +257,6 @@ export default router.post("/", async (req, res) => {
           ),
         );
       }
-
-      // const encryptedPassword = await bcrypt.hash(password, HASH_ROUND);
 
       const encryptedPassword = CryptoJS.AES.encrypt(
         password,
@@ -411,7 +276,6 @@ export default router.post("/", async (req, res) => {
 
       let message = {
         subject: `Confirmation of Interest in Data Engineer Course`,
-
         text: `Dear ${student.name},
 We are pleased to acknowledge your registration for the Data Engineer Course offered by the Sri Sathya Sai Skill Development Program.
         
@@ -432,9 +296,7 @@ Sri Sathya Sai Skill Development Program
 📞 9052372023`,
       };
 
-      // sendEmails(student, message);
       resendMail(student, message);
-
       return send(res, RESPONSE.SUCCESS);
     });
   } catch (err) {

@@ -71,7 +71,7 @@ export default router.post("/", authenticate, async (req, res) => {
       title,
       url,
       event_descriprion,
-      datetime,
+      datetime: moment(datetime).utc().format(),
       event_type,
       batch_id: batch_id,
       student_id: student_id,
@@ -91,16 +91,17 @@ export default router.post("/", authenticate, async (req, res) => {
       });
 
       let message = {
-        subject: `Meeting Link for Sri Sathya Sai Skill Development Program on ${moment(
-          datetime,
-        ).format("LL")}`,
+        subject: `Meeting Link for Sri Sathya Sai Skill Development Program on ${moment
+          .utc(datetime)
+          .local()
+          .format("LL")}`,
 
         text: `Dear ${student.name},
 
-We are pleased to invite you to the upcoming meeting for the Sri Sathya Sai Skill Development Program. Please find the details below:
+We are pleased to invite you to the upcoming meeting for the Sri Sathya Sai Skill Development Program.
 
-📅 Date: ${moment(datetime).format("LL")}
-⏰ Time: ${moment(datetime).format("LT")}
+📅 Date: ${moment.utc(datetime).local().format("LL")}
+⏰ Time: ${moment.utc(datetime).local().format("LT")}
 🔗 Meeting Link: ${url}
 
 Please ensure you join the meeting on time and have a stable internet connection. If you have any questions, feel free to reach out.
@@ -110,7 +111,7 @@ We look forward to your participation!
 Best regards,
 Program Coordinator
 Sri Sathya Sai Skill Development Program
-🌐 [www.sethu.ai](http://www.sethu.ai)
+🌐 www.sethu.ai
 📞 9052372023`,
       };
 

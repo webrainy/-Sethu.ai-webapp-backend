@@ -85,6 +85,7 @@ export default router.put("/", authenticate, async (req, res) => {
         aspiration,
         has_laptop,
         got_to_know_from,
+        referedby,
       } = req.body;
 
       let studentModel = await initstudentModel();
@@ -120,7 +121,7 @@ export default router.put("/", authenticate, async (req, res) => {
 
           return send(
             res,
-            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone")
+            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this phone"),
           );
         } else {
           updates.phone = phone;
@@ -128,7 +129,7 @@ export default router.put("/", authenticate, async (req, res) => {
       }
       if (email && email != undefined) {
         const emailPattern = String(email).match(
-          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
         );
 
         if (!emailPattern) {
@@ -153,7 +154,7 @@ export default router.put("/", authenticate, async (req, res) => {
           deletefile(`public/${imagedir}`, filename);
           return send(
             res,
-            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email")
+            setErrResMsg(RESPONSE.ALRDY_EXIST, "Entry with this email"),
           );
         } else {
           updates.email = email;
@@ -257,7 +258,13 @@ export default router.put("/", authenticate, async (req, res) => {
       if (got_to_know_from && got_to_know_from != undefined) {
         updates.got_to_know_from = got_to_know_from;
       }
-      
+
+      if (referedby && referedby != undefined) {
+        updates.referedby = referedby;
+      } else if (got_to_know_from && got_to_know_from !== "Referral") {
+        updates.referedby = null;
+      }
+
       await studentModel.update(updates, {
         where: { student_id: student_id },
       });

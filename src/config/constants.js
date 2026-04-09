@@ -51,6 +51,7 @@ export const BATCH_STATE = {
   NOT_ASSIGNED: 1,
   ASSIGNED: 2,
 };
+
 export const DNC_STATE = {
   CALL: 1,
   DONT_CALL: 2,
@@ -64,12 +65,6 @@ export const STATE = {
 export const IS_REFERED = {
   YES: 1,
   NO: 2,
-};
-
-export const COURSE_SOURCE = {
-  TASK: 1,
-  STUDENT_TRIBE: 2,
-  Referral: 3,
 };
 
 export const ATTENDANCE_TYPE = {
@@ -88,4 +83,21 @@ export const ASSIGNED_STATUS = {
   UNASSIGNED: 1,
 };
 
+export const GOT_TO_KNOW_FROM = {
+  WHATSAPP: "WhatsApp",
+  SOCIAL_MEDIA: "Social Media",
+  PAPER_AD: "Paper Ad",
+  COLLEGE: "College",
+  FRIENDS: "Friends",
+  EMAIL: "Email",
+  TASK: "TASK",
+  STUDENT_TRIBE: "Student Tribe",
+  REFERRAL: "Referral",
+};
+
+export const FEEDBACK_TYPE = {
+  SOFT_SKILL: 1,
+  TECHNICAL: 2,
+  JOB_NEED: 3,
+};
 export const HASH_ROUND = 10;

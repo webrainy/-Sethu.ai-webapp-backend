@@ -2,13 +2,13 @@ import { Sequelize } from "sequelize";
 
 let connection = null;
 
-const connectDB = async () => {
+const getConnection = async () => {
   if (!connection) {
     connection = new Sequelize({
-      database: process.env.PGDATABASE ,
+      database: process.env.PGDATABASE,
       host: process.env.PGHOST,
-      username: process.env.PGUSER ,
-      password: process.env.PGPASSWORD ,
+      username: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
       port: 5432,
       dialect: "postgres",
       pool: {
@@ -27,4 +27,4 @@ const connectDB = async () => {
   return connection;
 };
 
-export default connectDB;
+export default getConnection;
