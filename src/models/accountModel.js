@@ -47,7 +47,7 @@ const initaccountModel = async () => {
     });
 
     await account.sync({ alter: true });
-
+    //
     return account;
   } catch (err) {
     console.log("account model", err.message);
