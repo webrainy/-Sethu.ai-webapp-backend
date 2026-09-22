@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import fs from "fs";
 import path from "path";
 const __dirname = path.resolve();
-const resend = new Resend("re_StstGuCa_Crhg2qi5QFpMJibmxH2CPuCV");
+const resend = new Resend("re_KBKLEqSu_CJ1FwUMW5Mvw8EotUKRm5P4P");
 
 export const resendMail = async (student, msg, filePath) => {
   try {
