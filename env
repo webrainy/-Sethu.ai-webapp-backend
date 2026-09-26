@@ -1,0 +1,8 @@
+PORT = 5932
+PGDATABASE=sethuprod
+PGHOST=localhost
+PGUSER=sethuusr
+PGPASSWORD=sethu893@hyd432
+TOKEN_KEY=sethu893@hyd432
+
+RESEND_MAIL = info@sethu.ai
